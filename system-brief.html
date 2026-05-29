@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>若善設計｜智慧諮詢系統 · 流程說明書</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --carbon:#1A1A1A;
+  --matte:#7F8C8D;
+  --line:#E5E5E5;
+  --bg:#FAFAF8;
+  --cool:#F4F2EE;
+  --accent-client:#2C2C2C;
+  --accent-system:#4A4A4A;
+  --accent-designer:#6A6A6A;
+  --font-en:'Jost',sans-serif;
+  --font-zh:'Noto Sans TC','PingFang TC',sans-serif;
+}
+
+@page{size:A4;margin:0}
+@media print{
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .no-print{display:none!important}
+  .page-wrap{max-width:100%;padding:0}
+}
+
+body{
+  font-family:var(--font-zh);
+  background:#EFEFED;
+  color:var(--carbon);
+  line-height:1.7;
+  letter-spacing:0.06em;
+}
+
+.page-wrap{
+  max-width:794px;
+  margin:32px auto;
+  background:var(--bg);
+  box-shadow:0 4px 48px rgba(0,0,0,0.12);
+}
+
+/* ── HEADER ── */
+.doc-header{
+  background:var(--carbon);
+  color:#FAFAFA;
+  padding:40px 52px 36px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+}
+.doc-brand{
+  font-family:var(--font-en);
+  font-weight:200;
+  font-size:11px;
+  letter-spacing:0.32em;
+  text-transform:uppercase;
+  color:rgba(250,250,250,0.5);
+  margin-bottom:10px;
+}
+.doc-title{
+  font-size:20px;
+  font-weight:400;
+  letter-spacing:0.16em;
+  line-height:1.5;
+}
+.doc-title em{
+  font-style:normal;
+  font-size:13px;
+  color:rgba(250,250,250,0.55);
+  display:block;
+  margin-top:5px;
+  letter-spacing:0.14em;
+}
+.doc-meta{
+  text-align:right;
+  font-family:var(--font-en);
+}
+.doc-meta-label{
+  font-size:8px;
+  letter-spacing:0.28em;
+  text-transform:uppercase;
+  color:rgba(250,250,250,0.3);
+  display:block;
+  margin-bottom:4px;
+}
+.doc-meta-value{
+  font-size:11px;
+  letter-spacing:0.12em;
+  color:rgba(250,250,250,0.65);
+  display:block;
+  margin-bottom:12px;
+}
+
+/* ── LANE HEADER ── */
+.lanes{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  border-bottom:1px solid var(--line);
+}
+.lane-head{
+  padding:14px 20px;
+  border-right:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.lane-head:last-child{border-right:none}
+.lane-dot{
+  width:7px;height:7px;border-radius:50%;flex-shrink:0;
+}
+.lane-dot.client{background:#1A1A1A}
+.lane-dot.system{background:#888}
+.lane-dot.designer{background:#C0B8AE}
+.lane-label{
+  font-family:var(--font-en);
+  font-size:9px;
+  letter-spacing:0.26em;
+  text-transform:uppercase;
+  color:var(--matte);
+}
+.lane-label strong{
+  display:block;
+  font-size:10px;
+  letter-spacing:0.16em;
+  color:var(--carbon);
+  font-weight:500;
+  margin-bottom:1px;
+}
+
+/* ── FLOW AREA ── */
+.flow-area{
+  padding:0 52px 0;
+  position:relative;
+}
+
+/* Vertical spine */
+.flow-area::before{
+  content:'';
+  position:absolute;
+  left:84px;
+  top:0;bottom:0;
+  width:1px;
+  background:var(--line);
+}
+
+.step{
+  display:grid;
+  grid-template-columns:32px 1fr;
+  gap:0 24px;
+  padding:28px 0;
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+.step:last-child{border-bottom:none}
+
+.step-num-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0;
+  position:relative;
+}
+.step-num{
+  width:28px;height:28px;
+  background:var(--carbon);
+  color:#FAFAFA;
+  font-family:var(--font-en);
+  font-size:9px;
+  font-weight:500;
+  letter-spacing:0.1em;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  position:relative;
+  z-index:2;
+}
+.step-num.alt{background:var(--bg);border:1px solid var(--line);color:var(--matte)}
+.step-line{flex:1;width:1px;background:var(--line);margin-top:4px}
+
+.step-body{padding-bottom:4px}
+.step-role{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-bottom:8px;
+}
+.role-badge{
+  font-family:var(--font-en);font-size:8px;letter-spacing:0.22em;text-transform:uppercase;
+  padding:2px 8px;border:1px solid;
+}
+.role-badge.client{border-color:var(--carbon);color:var(--carbon)}
+.role-badge.system{border-color:#AAA;color:#888}
+.role-badge.designer{border-color:#C0B8AE;color:#9A9080}
+.role-badge.both{border-color:var(--carbon);color:var(--carbon);background:var(--carbon);color:#FAFAFA}
+
+.step-title{
+  font-size:15px;font-weight:500;letter-spacing:0.12em;
+  color:var(--carbon);margin-bottom:6px;
+}
+.step-desc{
+  font-size:12.5px;line-height:1.9;letter-spacing:0.06em;
+  color:var(--matte);
+}
+.step-desc strong{color:var(--carbon);font-weight:500}
+.step-highlight{
+  display:inline-block;
+  background:var(--cool);
+  padding:3px 10px;
+  font-size:11px;
+  letter-spacing:0.08em;
+  color:var(--carbon);
+  margin-top:6px;
+  margin-right:6px;
+}
+
+/* ── ARROW ROW ── */
+.arrow-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin:2px 0 10px;
+  font-family:var(--font-en);
+  font-size:10px;
+  letter-spacing:0.18em;
+  color:#BBB;
+}
+.arrow-row::before{
+  content:'';
+  width:16px;height:1px;background:#CCC;display:block;
+}
+
+/* ── BOTTOM GRID ── */
+.bottom-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  border-top:2px solid var(--carbon);
+  margin-top:0;
+}
+.bg-cell{
+  padding:28px 28px 32px;
+  border-right:1px solid var(--line);
+}
+.bg-cell:last-child{border-right:none}
+.bg-cell-title{
+  font-family:var(--font-en);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;
+  color:var(--matte);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line);
+}
+.bg-cell-title strong{display:block;font-size:11px;letter-spacing:0.16em;color:var(--carbon);font-weight:500;margin-bottom:3px}
+
+.qa-item{
+  display:flex;gap:10px;margin-bottom:11px;align-items:flex-start;
+}
+.qa-n{
+  font-family:var(--font-en);font-size:8.5px;letter-spacing:0.14em;
+  color:#CCC;margin-top:3px;white-space:nowrap;flex-shrink:0;
+}
+.qa-text{font-size:12px;letter-spacing:0.06em;color:var(--carbon);line-height:1.7}
+.qa-sub{font-size:10.5px;color:var(--matte);margin-top:1px}
+
+.tech-row{
+  display:flex;gap:10px;margin-bottom:9px;align-items:flex-start;
+  padding-bottom:9px;border-bottom:1px solid var(--line);
+  font-size:12px;letter-spacing:0.06em;
+}
+.tech-row:last-child{border-bottom:none;margin-bottom:0}
+.tech-label{
+  font-family:var(--font-en);font-size:8.5px;letter-spacing:0.18em;
+  text-transform:uppercase;color:#BBB;white-space:nowrap;flex-shrink:0;
+  margin-top:2px;width:56px;
+}
+.tech-val{color:var(--carbon)}
+.tech-sub{font-size:10.5px;color:var(--matte);display:block;margin-top:1px}
+
+/* ── CONFIRM SECTION ── */
+.confirm-section{
+  background:var(--carbon);
+  padding:28px 52px 36px;
+}
+.confirm-title{
+  font-family:var(--font-en);font-size:9px;letter-spacing:0.28em;text-transform:uppercase;
+  color:rgba(250,250,250,0.4);margin-bottom:20px;
+}
+.confirm-grid{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;
+}
+.confirm-item{
+  padding-right:24px;border-right:1px solid rgba(250,250,250,0.1);
+  padding-left:0;margin-right:0;
+}
+.confirm-item:last-child{border-right:none;padding-right:0}
+.confirm-item+.confirm-item{padding-left:24px}
+.confirm-q{
+  font-size:11.5px;letter-spacing:0.1em;color:rgba(250,250,250,0.75);
+  line-height:1.7;margin-bottom:10px;
+}
+.confirm-line{
+  border:none;border-bottom:1px solid rgba(250,250,250,0.18);
+  height:28px;width:100%;display:block;margin-bottom:8px;
+}
+
+/* ── FOOTER ── */
+.doc-footer{
+  background:#F0EDE7;
+  padding:14px 52px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.footer-note{
+  font-family:var(--font-en);font-size:8px;letter-spacing:0.22em;
+  text-transform:uppercase;color:#AAA;
+}
+
+/* ── PRINT BUTTON ── */
+.print-bar{
+  max-width:794px;margin:0 auto 16px;
+  display:flex;justify-content:flex-end;gap:10px;
+  padding:0 8px;
+}
+.btn-print{
+  font-family:var(--font-en);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;
+  background:var(--carbon);color:#FAFAFA;border:none;padding:10px 24px;cursor:pointer;
+}
+.btn-print:hover{background:#333}
+</style>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <button class="btn-print" onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div>
+      <div class="doc-brand">Reason Design · 若善設計</div>
+      <div class="doc-title">
+        智慧諮詢系統
+        <em>客戶問卷 → AI 分析 → 設計師確認 → 推播診斷書</em>
+      </div>
+    </div>
+    <div class="doc-meta">
+      <span class="doc-meta-label">Document</span>
+      <span class="doc-meta-value">System Flow v1.0</span>
+      <span class="doc-meta-label">Date</span>
+      <span class="doc-meta-value">2026.05.30</span>
+      <span class="doc-meta-label">Status</span>
+      <span class="doc-meta-value">待設計師確認</span>
+    </div>
+  </div>
+
+  <!-- LANE LABELS -->
+  <div class="lanes">
+    <div class="lane-head">
+      <div class="lane-dot client"></div>
+      <div class="lane-label"><strong>客戶端</strong>Client</div>
+    </div>
+    <div class="lane-head">
+      <div class="lane-dot system"></div>
+      <div class="lane-label"><strong>系統後端</strong>Backend / AI</div>
+    </div>
+    <div class="lane-head">
+      <div class="lane-dot designer"></div>
+      <div class="lane-label"><strong>設計師端</strong>Designer</div>
+    </div>
+  </div>
+
+  <!-- FLOW STEPS -->
+  <div class="flow-area">
+
+    <div class="step">
+      <div class="step-num-wrap">
+        <div class="step-num">01</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-role"><span class="role-badge client">客戶</span></div>
+        <div class="step-title">填寫線上問卷</div>
+        <div class="step-desc">客戶透過網頁連結填寫「生活與空間需求探索表」，約 <strong>10–15 分鐘</strong>完成。涵蓋：基本屋況、預算方向、家庭生活、空間感受、風格美學等 6 大面向。</div>
+        <div style="margin-top:10px">
+          <span class="step-highlight">公開網頁連結</span>
+          <span class="step-highlight">無需登入</span>
+          <span class="step-highlight">手機友善</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap">
+        <div class="step-num">02</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-role"><span class="role-badge system">系統</span></div>
+        <div class="step-title">送出 → AI 自動分析</div>
+        <div class="step-desc">客戶點擊送出後，系統即時呼叫 <strong>Claude AI</strong> 分析所有填寫資料，自動生成《生活與空間診斷書》初稿，包含：客戶輪廓、空間人格、動線需求、情緒關鍵字、設計方向、材質色彩方向、優先順序、Moodboard 初稿。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap">
+        <div class="step-num">03</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-role"><span class="role-badge client">客戶</span></div>
+        <div class="step-title">感謝畫面 + LINE 官方帳號引導</div>
+        <div class="step-desc">送出後，客戶立即看到溫暖問候語，畫面清楚引導加入 <strong>LINE 官方帳號</strong>（大按鈕 + QR Code），並說明：「設計師將在 3 個工作天內，將您的專屬診斷書送到您手上。」</div>
+        <div style="margin-top:10px">
+          <span class="step-highlight">LINE OA 加入連結</span>
+          <span class="step-highlight">若善設計品牌語氣</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap">
+        <div class="step-num">04</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-role"><span class="role-badge designer">設計師</span></div>
+        <div class="step-title">Telegram Bot 推播通知</div>
+        <div class="step-desc">系統透過 <strong>Telegram Bot</strong> 即時通知設計師，訊息包含：客戶姓名、屋況摘要、風格方向、預算區間，以及完整 AI 分析連結。設計師點擊 <strong>【開始問答調整】</strong> 進入下一步。</div>
+        <div style="margin-top:10px">
+          <span class="step-highlight">即時推播</span>
+          <span class="step-highlight">摘要 + 完整報告連結</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap">
+        <div class="step-num">05</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-role"><span class="role-badge designer">設計師</span></div>
+        <div class="step-title">Bot 問答調整（約 5 分鐘）</div>
+        <div class="step-desc">Telegram Bot 以對話方式提問 5–6 題，設計師逐一確認或補充，完成後點選 <strong>【送出完成】</strong>。目的是在 AI 分析基礎上加入設計師的專業判斷與溫度。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap">
+        <div class="step-num">06</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-role"><span class="role-badge system">系統</span></div>
+        <div class="step-title">整合分析 → 生成最終診斷書 PDF</div>
+        <div class="step-desc">系統合併 AI 分析初稿 + 設計師補充意見，自動產生最終版《若善設計｜生活與空間診斷書》PDF，版面精緻、具品牌識別，客戶收到時感受是「設計師專為我整理的」。</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num-wrap">
+        <div class="step-num">07</div>
+      </div>
+      <div class="step-body">
+        <div class="step-role"><span class="role-badge both">客戶 + 系統</span></div>
+        <div class="step-title">推播診斷書給客戶（雙管道）</div>
+        <div class="step-desc">
+          <strong>管道 A（必送）：</strong>Email 寄出，附帶 PDF 診斷書附件，溫暖問候語 + 下一步說明。<br>
+          <strong>管道 B（加分）：</strong>若客戶已加入 LINE 官方帳號，同步 LINE 推播通知 + PDF 下載連結。
+        </div>
+        <div style="margin-top:10px">
+          <span class="step-highlight">Email 必送</span>
+          <span class="step-highlight">LINE 加分推播</span>
+          <span class="step-highlight">PDF 附件</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /flow-area -->
+
+  <!-- BOTTOM GRID -->
+  <div class="bottom-grid">
+
+    <!-- LEFT: BOT Q&A LIST -->
+    <div class="bg-cell">
+      <div class="bg-cell-title"><strong>設計師 Bot 問答內容</strong>Designer Q&amp;A · 5 Questions</div>
+
+      <div class="qa-item">
+        <div class="qa-n">Q1</div>
+        <div>
+          <div class="qa-text">請確認 AI 分析的設計方向，有需要調整嗎？</div>
+          <div class="qa-sub">選項：確認 ✓ ／ 調整方向 → 補充文字</div>
+        </div>
+      </div>
+      <div class="qa-item">
+        <div class="qa-n">Q2</div>
+        <div>
+          <div class="qa-text">材質與色彩方向，有要特別建議的嗎？</div>
+          <div class="qa-sub">自由填寫，可略過</div>
+        </div>
+      </div>
+      <div class="qa-item">
+        <div class="qa-n">Q3</div>
+        <div>
+          <div class="qa-text">動線或機能需求，有要補充的想法嗎？</div>
+          <div class="qa-sub">自由填寫，可略過</div>
+        </div>
+      </div>
+      <div class="qa-item">
+        <div class="qa-n">Q4</div>
+        <div>
+          <div class="qa-text">對這位客戶的預算配置，有什麼建議？</div>
+          <div class="qa-sub">自由填寫，可略過</div>
+        </div>
+      </div>
+      <div class="qa-item">
+        <div class="qa-n">Q5</div>
+        <div>
+          <div class="qa-text">想對客戶說的一句話（會出現在診斷書結尾）</div>
+          <div class="qa-sub">設計師個人語氣，增加溫度</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: TECH STACK -->
+    <div class="bg-cell">
+      <div class="bg-cell-title"><strong>技術元件</strong>Technology Stack</div>
+
+      <div class="tech-row">
+        <div class="tech-label">前端</div>
+        <div><div class="tech-val">線上問卷網頁</div><span class="tech-sub">HTML · 現有問卷已完成</span></div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-label">後端</div>
+        <div><div class="tech-val">Node.js / Express</div><span class="tech-sub">Mac mini · Cloudflare Tunnel 已設定</span></div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-label">AI 分析</div>
+        <div><div class="tech-val">Claude API（Sonnet）</div><span class="tech-sub">Anthropic · 繁體中文空間語境最佳</span></div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-label">設計師端</div>
+        <div><div class="tech-val">Telegram Bot</div><span class="tech-sub">即時通知 + Q&amp;A · 現有 PM-Bot 可複用</span></div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-label">PDF</div>
+        <div><div class="tech-val">Puppeteer（伺服器端）</div><span class="tech-sub">中文字體支援佳，版面穩定</span></div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-label">Email</div>
+        <div><div class="tech-val">Resend.com API</div><span class="tech-sub">免費 100 封/天 · 整合最簡單</span></div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-label">LINE</div>
+        <div><div class="tech-val">LINE Messaging API</div><span class="tech-sub">需先申請 LINE 官方帳號</span></div>
+      </div>
+      <div class="tech-row">
+        <div class="tech-label">資料庫</div>
+        <div><div class="tech-val">SQLite / Supabase</div><span class="tech-sub">小量表單 · SQLite 已足夠</span></div>
+      </div>
+    </div>
+
+  </div><!-- /bottom-grid -->
+
+  <!-- CONFIRM SECTION -->
+  <div class="confirm-section">
+    <div class="confirm-title">Designer Confirmation · 設計師確認事項 — 請填寫後回傳</div>
+    <div class="confirm-grid">
+      <div class="confirm-item">
+        <div class="confirm-q">LINE 官方帳號<br>已有 ／ 需申請？</div>
+        <div class="confirm-line"></div>
+        <div class="confirm-q">LINE OA 名稱 / ID</div>
+        <div class="confirm-line"></div>
+      </div>
+      <div class="confirm-item">
+        <div class="confirm-q">Telegram 帳號<br>（接收通知用）</div>
+        <div class="confirm-line"></div>
+        <div class="confirm-q">寄件 Email 網域</div>
+        <div class="confirm-line"></div>
+      </div>
+      <div class="confirm-item">
+        <div class="confirm-q">診斷書回傳時間<br>目標：幾個工作天？</div>
+        <div class="confirm-line"></div>
+        <div class="confirm-q">其他意見或問題</div>
+        <div class="confirm-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <div class="footer-note">Reason Design · 若善設計 · System Flow v1.0 · 2026.05</div>
+    <div class="footer-note">Internal Document · Not for Distribution</div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+</body>
+</html>

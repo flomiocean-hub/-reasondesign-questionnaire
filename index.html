@@ -46,6 +46,13 @@ body{
 }
 .nav-brand em{color:var(--matte);font-style:normal;margin-left:10px;font-weight:300}
 
+.btn-brief{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--matte);text-decoration:none;border:1px solid var(--line);
+  padding:7px 18px;transition:all 0.3s ease;
+}
+.btn-brief:hover{border-color:var(--carbon);color:var(--carbon)}
+
 /* ── PROGRESS ── */
 .progress-wrap{
   position:fixed;top:60px;left:0;right:0;z-index:199;
@@ -389,6 +396,7 @@ input[type="range"]::-moz-range-thumb{
 <!-- NAV -->
 <nav class="top-nav">
   <div class="nav-brand">Reason Design<em>若善設計</em></div>
+  <a class="btn-brief" href="system-brief.html" target="_blank">System Brief</a>
 </nav>
 
 <!-- PROGRESS -->
