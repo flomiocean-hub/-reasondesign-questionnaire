@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>若善設計｜生活與空間需求探索表 v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --white:#FAFAFA;
+  --cool-gray:#F0F2F5;
+  --carbon:#1A1A1A;
+  --matte:#7F8C8D;
+  --line:#E5E5E5;
+  --font-en:'Jost',sans-serif;
+  --font-zh:'Noto Sans TC','PingFang TC',sans-serif;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:var(--font-zh);
+  background:var(--white);
+  color:var(--carbon);
+  line-height:1.8;
+  letter-spacing:0.08em;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── NAV ── */
+.top-nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(250,250,250,0.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  height:60px;padding:0 48px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-brand{
+  font-family:var(--font-en);font-weight:200;
+  font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:var(--carbon);
+}
+.nav-brand em{color:var(--matte);font-style:normal;margin-left:10px;font-weight:300}
+.btn-pdf{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--carbon);background:transparent;border:1px solid var(--carbon);
+  padding:8px 22px;cursor:pointer;transition:all 0.4s ease;
+}
+.btn-pdf:hover{background:var(--carbon);color:var(--white)}
+
+/* ── PROGRESS ── */
+.progress-wrap{
+  position:fixed;top:60px;left:0;right:0;z-index:199;
+  background:var(--white);border-bottom:1px solid var(--line);
+  padding:14px 48px;
+}
+.progress-track{height:1px;background:var(--line);margin-bottom:10px;position:relative}
+.progress-fill{height:1px;background:var(--carbon);transition:width 0.6s cubic-bezier(0.4,0,0.2,1);width:0%}
+.progress-meta{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+}
+.progress-name{color:var(--carbon)}
+.progress-step{color:var(--matte)}
+
+/* ── PAGES ── */
+.main{padding-top:120px;min-height:100vh}
+
+.page{
+  display:none;opacity:0;transform:translateY(20px);
+  transition:opacity 0.5s ease,transform 0.5s ease;
+}
+.page.active{display:block}
+.page.visible{opacity:1;transform:translateY(0)}
+
+/* ── PAGE 0 ── */
+.p0-wrap{
+  max-width:660px;margin:0 auto;
+  padding:72px 48px 100px;
+}
+.p0-text{opacity:0;transform:translateY(28px);transition:opacity 0.9s ease,transform 0.9s ease}
+.p0-text.visible{opacity:1;transform:translateY(0)}
+.p0-eyebrow{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.32em;
+  text-transform:uppercase;color:var(--matte);margin-bottom:52px;
+}
+.p0-heading{
+  font-family:var(--font-en);font-weight:200;
+  font-size:clamp(36px,5.5vw,60px);letter-spacing:0.04em;line-height:1.15;
+  color:var(--carbon);margin-bottom:44px;
+}
+.p0-body{font-size:15px;line-height:2.1;letter-spacing:0.08em;color:var(--carbon);margin-bottom:12px}
+.p0-sig{
+  font-family:var(--font-en);font-size:11px;letter-spacing:0.22em;color:var(--matte);
+  margin-top:52px;padding-top:24px;border-top:1px solid var(--line);
+}
+.p0-cta{margin-top:68px}
+
+/* ── PAGE INNER ── */
+.p-wrap{max-width:880px;margin:0 auto;padding:56px 48px 100px}
+
+/* ── SECTION HEAD ── */
+.s-label{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.3em;
+  text-transform:uppercase;color:var(--matte);margin-bottom:6px;
+}
+.s-title{
+  font-size:21px;font-weight:400;letter-spacing:0.14em;color:var(--carbon);
+  margin-bottom:52px;padding-bottom:20px;border-bottom:1px solid var(--line);
+}
+
+/* ── FORM GRID ── */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:36px 52px;margin-bottom:52px}
+.fgrid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px 36px;margin-bottom:36px}
+.fcol-full{grid-column:1/-1}
+
+.ffield{display:flex;flex-direction:column;gap:8px}
+.flabel{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--matte);
+}
+.flabel-note{font-family:var(--font-en);font-size:9px;color:var(--line);margin-left:6px;text-transform:none}
+
+.finput{
+  background:transparent;border:none;border-bottom:1px solid var(--line);
+  padding:10px 0;font-size:15px;font-family:var(--font-zh);color:var(--carbon);
+  letter-spacing:0.06em;outline:none;transition:border-color 0.4s ease;width:100%;
+}
+.finput:focus{border-bottom-color:var(--carbon)}
+.finput::placeholder{color:var(--line);font-size:14px}
+
+.ftextarea{
+  background:transparent;border:1px solid var(--line);
+  padding:16px 18px;font-size:15px;font-family:var(--font-zh);color:var(--carbon);
+  letter-spacing:0.06em;outline:none;transition:border-color 0.4s ease;
+  width:100%;resize:vertical;min-height:110px;line-height:1.9;
+}
+.ftextarea:focus{border-color:var(--carbon)}
+.ftextarea-lg{min-height:160px}
+
+/* ── CARD OPTIONS ── */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:44px}
+.cards-wide{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.cards-sm{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+
+.copt{
+  border:1px solid var(--line);padding:13px 15px;cursor:pointer;
+  transition:all 0.4s ease;font-size:13.5px;letter-spacing:0.05em;
+  color:var(--carbon);user-select:none;line-height:1.5;
+}
+.copt:hover{border-color:var(--carbon)}
+.copt.sel{background:var(--carbon);color:var(--white);border-color:var(--carbon)}
+.copt-sub{font-size:10.5px;color:var(--matte);margin-top:3px;letter-spacing:0.04em}
+.copt.sel .copt-sub{color:rgba(250,250,250,0.55)}
+.copt-extra{display:none;margin-top:10px}
+.copt.sel .copt-extra{display:block}
+.copt-extra input{
+  background:transparent;border:none;border-bottom:1px solid rgba(250,250,250,0.35);
+  color:var(--white);font-family:var(--font-zh);font-size:12px;
+  width:100%;outline:none;padding:3px 0;
+}
+.copt-extra input::placeholder{color:rgba(250,250,250,0.35)}
+
+/* ── RADIO ROW ── */
+.rgroup{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px}
+.ropt{
+  border:1px solid var(--line);padding:11px 20px;cursor:pointer;
+  transition:all 0.4s ease;font-size:14px;letter-spacing:0.06em;
+  color:var(--carbon);user-select:none;
+}
+.ropt:hover{border-color:var(--carbon)}
+.ropt.sel{background:var(--carbon);color:var(--white);border-color:var(--carbon)}
+
+/* ── Q BLOCK ── */
+.qblock{margin-bottom:56px}
+.qlabel{
+  font-size:15.5px;letter-spacing:0.1em;color:var(--carbon);
+  margin-bottom:20px;line-height:1.75;display:flex;align-items:flex-start;gap:14px;
+}
+.qnum{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.18em;
+  color:var(--matte);margin-top:5px;white-space:nowrap;
+}
+.qsub{font-size:12px;color:var(--matte);letter-spacing:0.08em;margin-bottom:18px;margin-top:-14px}
+
+/* ── INLINE ROW ── */
+.irow{display:flex;align-items:baseline;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.ilabel{font-size:14px;letter-spacing:0.08em;color:var(--carbon);white-space:nowrap}
+.iinput{
+  background:transparent;border:none;border-bottom:1px solid var(--line);
+  padding:4px 0;font-size:15px;font-family:var(--font-zh);color:var(--carbon);
+  letter-spacing:0.06em;outline:none;transition:border-color 0.4s ease;
+  width:72px;text-align:center;
+}
+.iinput:focus{border-bottom-color:var(--carbon)}
+.iinput-md{width:140px}
+.iinput-lg{width:200px}
+
+/* ── MEMBER BLOCK ── */
+.member-wrap{border:1px solid var(--line);padding:28px 32px;margin-bottom:16px;transition:border-color 0.4s}
+.member-wrap:hover{border-color:#C8C8C8}
+.member-head{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.28em;
+  text-transform:uppercase;color:var(--matte);margin-bottom:22px;
+}
+
+/* ── CHECKBOX ── */
+.chk{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  font-size:14px;letter-spacing:0.06em;color:var(--carbon);user-select:none;
+}
+.chkbox{
+  width:15px;height:15px;border:1px solid var(--line);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all 0.3s ease;
+}
+.chkbox.on{background:var(--carbon);border-color:var(--carbon)}
+.chkbox.on::after{
+  content:'';width:7px;height:4px;
+  border-left:1.5px solid var(--white);border-bottom:1.5px solid var(--white);
+  transform:rotate(-45deg) translateY(-1px);
+}
+
+/* ── SLIDER ── */
+.slider-wrap{margin-bottom:44px}
+.slider-row{
+  display:grid;grid-template-columns:130px 1fr 130px;
+  align-items:center;gap:20px;padding:18px 0;border-bottom:1px solid var(--line);
+}
+.sl-left{font-size:13px;letter-spacing:0.08em;color:var(--carbon);text-align:right}
+.sl-right{font-size:13px;letter-spacing:0.08em;color:var(--carbon);text-align:left}
+
+input[type="range"]{
+  -webkit-appearance:none;appearance:none;width:100%;
+  height:1px;background:var(--line);outline:none;cursor:pointer;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:13px;height:13px;background:var(--carbon);border-radius:50%;
+  cursor:pointer;transition:transform 0.3s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.4)}
+input[type="range"]::-moz-range-thumb{
+  width:13px;height:13px;background:var(--carbon);
+  border-radius:50%;border:none;cursor:pointer;
+}
+
+/* ── DIVIDER ── */
+.divider{border:none;border-top:1px solid var(--line);margin:52px 0}
+
+/* ── BUTTONS ── */
+.btn-primary{
+  font-family:var(--font-en);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;
+  color:var(--white);background:var(--carbon);border:1px solid var(--carbon);
+  padding:15px 52px;cursor:pointer;transition:all 0.4s ease;
+}
+.btn-primary:hover{background:transparent;color:var(--carbon)}
+.btn-ghost{
+  font-family:var(--font-en);font-size:11px;letter-spacing:0.26em;text-transform:uppercase;
+  color:var(--carbon);background:transparent;border:1px solid var(--line);
+  padding:15px 44px;cursor:pointer;transition:all 0.4s ease;
+}
+.btn-ghost:hover{border-color:var(--carbon)}
+
+.nav-btns{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:72px;padding-top:32px;border-top:1px solid var(--line);
+}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:40px;left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--carbon);color:var(--white);
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;
+  padding:14px 44px;opacity:0;transition:all 0.5s ease;
+  z-index:999;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── DUAL TEXTAREA ── */
+.dual{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-bottom:44px}
+
+/* ── COMPLETION ── */
+.done-wrap{max-width:780px;margin:0 auto;padding:80px 48px 120px}
+.done-text{
+  font-size:16px;line-height:2.3;letter-spacing:0.1em;color:var(--carbon);
+  margin-bottom:80px;padding-bottom:60px;border-bottom:1px solid var(--line);
+}
+.done-sig{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.26em;
+  color:var(--matte);margin-top:36px;text-transform:uppercase;
+}
+.process-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--line);margin-top:8px;
+}
+.process-card{background:var(--white);padding:32px 26px}
+.process-n{
+  font-family:var(--font-en);font-size:10px;letter-spacing:0.22em;
+  color:var(--matte);margin-bottom:12px;
+}
+.process-t{font-size:15px;letter-spacing:0.14em;color:var(--carbon);line-height:1.6}
+
+/* ── REFERENCE ── */
+.ref-ch{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+
+/* ── EXTRA INPUT ── */
+.extra-input{max-width:320px;margin-top:10px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .top-nav,.progress-wrap{padding:0 20px}
+  .progress-wrap{padding:12px 20px}
+  .p0-wrap,.p-wrap,.done-wrap{padding-left:20px;padding-right:20px}
+  .fgrid,.dual{grid-template-columns:1fr;gap:24px}
+  .fgrid-3{grid-template-columns:1fr 1fr}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .slider-row{grid-template-columns:80px 1fr 80px;gap:12px}
+  .sl-left,.sl-right{font-size:11px}
+  .process-grid{grid-template-columns:1fr 1fr}
+  .nav-btns{flex-direction:column-reverse;gap:14px}
+  .btn-primary,.btn-ghost{width:100%;text-align:center}
+}
+@media(max-width:480px){
+  .slider-row{grid-template-columns:1fr;gap:8px}
+  .sl-left{text-align:left}
+  .process-grid{grid-template-columns:1fr}
+  .fgrid-3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-brand">Reason Design<em>若善設計</em></div>
+  <button class="btn-pdf" onclick="exportPDF()">Export PDF</button>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-track">
+    <div class="progress-fill" id="pFill"></div>
+  </div>
+  <div class="progress-meta">
+    <span class="progress-name" id="pName">Prologue</span>
+    <span class="progress-step" id="pStep">— / —</span>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MAIN -->
+<main class="main" id="formEl">
+
+<!-- ══ PAGE 0 ══ -->
+<div class="page active" id="page-0">
+  <div class="p0-wrap">
+    <div class="p0-text" id="p0text">
+      <p class="p0-eyebrow">Reason Design × Space Survey v2</p>
+      <h1 class="p0-heading">在開始之前。</h1>
+      <p class="p0-body">每個家的樣子，都來自生活方式。</p>
+      <p class="p0-body">在開始設計之前，希望先理解居住習慣、日常節奏與對未來生活的期待，讓空間不只是好看，而是真正貼近生活、陪伴日常。</p>
+      <p class="p0-body">這份表單約需 10–15 分鐘填寫完成，內容沒有標準答案，請依照最真實的生活習慣與感受填寫即可。</p>
+      <div class="p0-sig">—— 若善設計 Reason Design</div>
+      <div class="p0-cta">
+        <button class="btn-primary" onclick="goTo(1)">開始梳理日常</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 1 ══ -->
+<div class="page" id="page-1">
+  <div class="p-wrap">
+    <p class="s-label">Page 01</p>
+    <h2 class="s-title">基本與屋況資訊</h2>
+
+    <div class="fgrid">
+      <div class="ffield">
+        <label class="flabel">Date / 填表日期</label>
+        <input type="date" class="finput" id="f_date">
+      </div>
+      <div class="ffield">
+        <label class="flabel">Name / 填表人姓名</label>
+        <input type="text" class="finput" id="f_name" placeholder="您的姓名">
+      </div>
+      <div class="ffield">
+        <label class="flabel">Phone / 聯絡電話</label>
+        <input type="tel" class="finput" id="f_phone" placeholder="0912-345-678">
+      </div>
+      <div class="ffield">
+        <label class="flabel">Email</label>
+        <input type="email" class="finput" id="f_email" placeholder="your@email.com">
+      </div>
+      <div class="ffield">
+        <label class="flabel">LINE ID <span class="flabel-note">選填</span></label>
+        <input type="text" class="finput" id="f_line" placeholder="LINE ID">
+      </div>
+      <div class="ffield">
+        <label class="flabel">Project / 專案地址或社區名稱</label>
+        <input type="text" class="finput" id="f_address" placeholder="地址或社區名稱">
+      </div>
+      <div class="ffield">
+        <label class="flabel">Move-in / 預計入住日期</label>
+        <input type="date" class="finput" id="f_movein">
+      </div>
+      <div class="ffield">
+        <label class="flabel">Completion / 希望完工日期</label>
+        <input type="date" class="finput" id="f_complete">
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q1</span>目前屋況（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="housing_status" data-v="預售客變階段" onclick="toggleCard(this,true)">
+          預售客變階段
+          <div class="copt-extra"><input type="text" placeholder="預計交屋時間：＿＿" onclick="event.stopPropagation()"></div>
+        </div>
+        <div class="copt" data-g="housing_status" data-v="預售屋" onclick="toggleCard(this,true)">
+          預售屋
+          <div class="copt-extra"><input type="text" placeholder="預計交屋時間：＿＿" onclick="event.stopPropagation()"></div>
+        </div>
+        <div class="copt" data-g="housing_status" data-v="新成屋" onclick="toggleCard(this,true)">新成屋</div>
+        <div class="copt" data-g="housing_status" data-v="中古屋" onclick="toggleCard(this,true)">
+          中古屋
+          <div class="copt-extra"><input type="text" placeholder="屋齡：約＿＿年" onclick="event.stopPropagation()"></div>
+        </div>
+        <div class="copt" data-g="housing_status" data-v="毛胚屋" onclick="toggleCard(this,true)">毛胚屋</div>
+      </div>
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q2</span>住宅類型（單選）</div>
+      <div class="rgroup">
+        <div class="ropt" data-g="housing_type" data-v="電梯大樓" onclick="toggleRadio(this)">電梯大樓</div>
+        <div class="ropt" data-g="housing_type" data-v="透天住宅" onclick="toggleRadio(this)">透天住宅</div>
+        <div class="ropt" data-g="housing_type" data-v="公寓" onclick="toggleRadio(this)">公寓</div>
+        <div class="ropt" data-g="housing_type" data-v="商業空間／工作室" onclick="toggleRadio(this)">商業空間／工作室</div>
+        <div class="ropt" data-g="housing_type" data-v="其他" onclick="toggleRadio(this)">其他</div>
+      </div>
+      <input type="text" class="finput extra-input" id="housing_type_other" placeholder="其他住宅類型：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q3</span>現有格局與坪數</div>
+      <div class="irow">
+        <span class="ilabel">現有格局：</span>
+        <input type="number" class="iinput" id="f_room" placeholder="—" min="0" max="20">
+        <span class="ilabel">房</span>
+        <input type="number" class="iinput" id="f_hall" placeholder="—" min="0" max="10">
+        <span class="ilabel">廳</span>
+        <input type="number" class="iinput" id="f_bath" placeholder="—" min="0" max="10">
+        <span class="ilabel">衛</span>
+      </div>
+      <div class="irow">
+        <span class="ilabel">室內坪數：約</span>
+        <input type="number" class="iinput iinput-md" id="f_area" placeholder="—" min="0">
+        <span class="ilabel">坪</span>
+      </div>
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q4</span>本次希望規劃的空間（可複選）</div>
+      <div class="cards">
+        <div class="copt" data-g="spaces" data-v="玄關" onclick="toggleCard(this,true)">玄關</div>
+        <div class="copt" data-g="spaces" data-v="客廳" onclick="toggleCard(this,true)">客廳</div>
+        <div class="copt" data-g="spaces" data-v="餐廳" onclick="toggleCard(this,true)">餐廳</div>
+        <div class="copt" data-g="spaces" data-v="廚房" onclick="toggleCard(this,true)">廚房</div>
+        <div class="copt" data-g="spaces" data-v="主臥室" onclick="toggleCard(this,true)">主臥室</div>
+        <div class="copt" data-g="spaces" data-v="次臥／客房" onclick="toggleCard(this,true)">次臥／客房</div>
+        <div class="copt" data-g="spaces" data-v="小孩房" onclick="toggleCard(this,true)">小孩房</div>
+        <div class="copt" data-g="spaces" data-v="更衣室" onclick="toggleCard(this,true)">更衣室</div>
+        <div class="copt" data-g="spaces" data-v="書房／工作區" onclick="toggleCard(this,true)">書房／工作區</div>
+        <div class="copt" data-g="spaces" data-v="收納空間" onclick="toggleCard(this,true)">收納空間</div>
+        <div class="copt" data-g="spaces" data-v="浴室" onclick="toggleCard(this,true)">浴室</div>
+        <div class="copt" data-g="spaces" data-v="陽台" onclick="toggleCard(this,true)">陽台</div>
+      </div>
+      <input type="text" class="finput extra-input" id="spaces_other" placeholder="其他空間：＿＿＿＿">
+    </div>
+
+    <div class="nav-btns"><div></div><button class="btn-primary" onclick="goTo(2)">下一步</button></div>
+  </div>
+</div>
+
+<!-- ══ PAGE 2 ══ -->
+<div class="page" id="page-2">
+  <div class="p-wrap">
+    <p class="s-label">Page 02</p>
+    <h2 class="s-title">裝修經驗與預算方向</h2>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q1</span>過去是否有裝修經驗？（單選）</div>
+      <div class="rgroup">
+        <div class="ropt" data-g="reno_exp" data-v="第一次裝修" onclick="toggleRadio(this)">第一次裝修</div>
+        <div class="ropt" data-g="reno_exp" data-v="曾有裝修經驗" onclick="toggleRadio(this)">曾有裝修經驗</div>
+      </div>
+      <input type="text" class="finput extra-input" id="reno_exp_count" placeholder="約＿＿次">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q2</span>本次裝修最重視的是（可複選）</div>
+      <div class="cards">
+        <div class="copt" data-g="priorities" data-v="空間氛圍" onclick="toggleCard(this,true)">空間氛圍</div>
+        <div class="copt" data-g="priorities" data-v="收納機能" onclick="toggleCard(this,true)">收納機能</div>
+        <div class="copt" data-g="priorities" data-v="預算控制" onclick="toggleCard(this,true)">預算控制</div>
+        <div class="copt" data-g="priorities" data-v="耐用性" onclick="toggleCard(this,true)">耐用性</div>
+        <div class="copt" data-g="priorities" data-v="品質完整度" onclick="toggleCard(this,true)">品質完整度</div>
+        <div class="copt" data-g="priorities" data-v="動線規劃" onclick="toggleCard(this,true)">動線規劃</div>
+        <div class="copt" data-g="priorities" data-v="家人互動" onclick="toggleCard(this,true)">家人互動</div>
+        <div class="copt" data-g="priorities" data-v="品牌設備" onclick="toggleCard(this,true)">品牌設備</div>
+        <div class="copt" data-g="priorities" data-v="工程品質" onclick="toggleCard(this,true)">工程品質</div>
+      </div>
+      <input type="text" class="finput extra-input" id="priorities_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q3</span>本次預計投入裝修預算（不含活動家具／家電／窗簾／空調）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="budget" data-v="100–200萬" onclick="toggleRadio(this)">100–200 萬</div>
+        <div class="copt" data-g="budget" data-v="200–300萬" onclick="toggleRadio(this)">200–300 萬</div>
+        <div class="copt" data-g="budget" data-v="300–500萬" onclick="toggleRadio(this)">300–500 萬</div>
+        <div class="copt" data-g="budget" data-v="500–800萬" onclick="toggleRadio(this)">500–800 萬</div>
+        <div class="copt" data-g="budget" data-v="800萬以上" onclick="toggleRadio(this)">800 萬以上</div>
+        <div class="copt" data-g="budget" data-v="希望與設計師討論" onclick="toggleRadio(this)">希望與設計師討論較適合的配置方式</div>
+      </div>
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q4</span>目前較在意的方向（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="budget_focus" data-v="希望在預算內達到最好效果" onclick="toggleCard(this,true)">希望在預算內達到最好效果</div>
+        <div class="copt" data-g="budget_focus" data-v="願意投資在質感與細節" onclick="toggleCard(this,true)">願意投資在質感與細節</div>
+        <div class="copt" data-g="budget_focus" data-v="希望降低未來維護成本" onclick="toggleCard(this,true)">希望降低未來維護成本</div>
+        <div class="copt" data-g="budget_focus" data-v="希望一次做到位、長久居住" onclick="toggleCard(this,true)">希望一次做到位、長久居住</div>
+        <div class="copt" data-g="budget_focus" data-v="希望兼顧美感與實用性" onclick="toggleCard(this,true)">希望兼顧美感與實用性</div>
+        <div class="copt" data-g="budget_focus" data-v="尚在評估階段，希望了解可行方向" onclick="toggleCard(this,true)">尚在評估階段，希望了解可行方向</div>
+      </div>
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q5</span>家中決策方式（單選）</div>
+      <div class="rgroup" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div class="ropt" data-g="decision" data-v="一人決定" onclick="toggleRadio(this)">一人決定</div>
+        <div class="ropt" data-g="decision" data-v="夫妻／伴侶共同討論" onclick="toggleRadio(this)">夫妻／伴侶共同討論</div>
+        <div class="ropt" data-g="decision" data-v="家人共同參與" onclick="toggleRadio(this)">家人共同參與</div>
+        <div class="ropt" data-g="decision" data-v="長輩會參與決策" onclick="toggleRadio(this)">長輩會參與決策</div>
+        <div class="ropt" data-g="decision" data-v="希望設計師協助整合方向" onclick="toggleRadio(this)">希望設計師協助整合方向</div>
+      </div>
+      <div class="ffield" style="max-width:300px;margin-top:8px">
+        <label class="flabel">主要決策者</label>
+        <input type="text" class="finput" id="f_decision_maker" placeholder="＿＿＿＿">
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-ghost" onclick="goTo(1)">上一步</button>
+      <button class="btn-primary" onclick="goTo(3)">下一步</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 3 ══ -->
+<div class="page" id="page-3">
+  <div class="p-wrap">
+    <p class="s-label">Page 03</p>
+    <h2 class="s-title">家庭與生活方式</h2>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q1</span>居住成員</div>
+
+      <div class="member-wrap">
+        <div class="member-head">Adults · 成年人</div>
+        <div class="irow">
+          <span class="ilabel">共</span>
+          <input type="number" class="iinput" id="f_adults" placeholder="—" min="0" max="20">
+          <span class="ilabel">位，年齡區間：約</span>
+          <input type="text" class="iinput iinput-md" id="f_adults_age" placeholder="＿＿">
+        </div>
+        <div class="ffield">
+          <label class="flabel">特殊需求（工作型態、生活習慣等）</label>
+          <input type="text" class="finput" id="f_adults_note" placeholder="如：在家工作、生活習慣⋯⋯">
+        </div>
+      </div>
+
+      <div class="member-wrap">
+        <div class="member-head">Children · 孩童或青少年</div>
+        <div class="irow">
+          <span class="ilabel">共</span>
+          <input type="number" class="iinput" id="f_kids" placeholder="—" min="0" max="20">
+          <span class="ilabel">位，年齡：約</span>
+          <input type="text" class="iinput iinput-md" id="f_kids_age" placeholder="＿＿">
+        </div>
+        <div class="irow" style="margin-bottom:20px">
+          <span class="ilabel">是否需要成長型空間規劃？</span>
+          <label class="chk" onclick="toggleChk(this)"><span class="chkbox"></span>是</label>
+          <label class="chk" onclick="toggleChk(this)"><span class="chkbox"></span>否</label>
+        </div>
+        <p class="qsub" style="margin-bottom:12px">孩子的生活特性（可複選）</p>
+        <div class="cards cards-sm">
+          <div class="copt" data-g="kids_traits" data-v="活動量大" onclick="toggleCard(this,true)">活動量大</div>
+          <div class="copt" data-g="kids_traits" data-v="喜歡閱讀" onclick="toggleCard(this,true)">喜歡閱讀</div>
+          <div class="copt" data-g="kids_traits" data-v="喜歡創作／手作" onclick="toggleCard(this,true)">喜歡創作／手作</div>
+          <div class="copt" data-g="kids_traits" data-v="喜歡陪伴互動" onclick="toggleCard(this,true)">喜歡陪伴互動</div>
+          <div class="copt" data-g="kids_traits" data-v="需要獨立專注空間" onclick="toggleCard(this,true)">需要獨立專注空間</div>
+        </div>
+        <input type="text" class="finput extra-input" id="kids_traits_other" placeholder="其他：＿＿＿＿">
+      </div>
+
+      <div class="member-wrap">
+        <div class="member-head">Elders · 長輩</div>
+        <div class="irow" style="margin-bottom:14px">
+          <span class="ilabel">共</span>
+          <input type="number" class="iinput" id="f_elders" placeholder="—" min="0" max="20">
+          <span class="ilabel">位</span>
+        </div>
+        <div class="irow" style="margin-bottom:18px">
+          <span class="ilabel">是否需無障礙或安全考量？</span>
+          <label class="chk" onclick="toggleChk(this)"><span class="chkbox"></span>是</label>
+          <label class="chk" onclick="toggleChk(this)"><span class="chkbox"></span>否</label>
+        </div>
+        <div class="ffield">
+          <label class="flabel">特殊需求</label>
+          <input type="text" class="finput" id="f_elders_note" placeholder="如：無障礙設施、安全扶手⋯⋯">
+        </div>
+      </div>
+
+      <div class="member-wrap">
+        <div class="member-head">Pets · 寵物</div>
+        <div class="irow" style="margin-bottom:18px">
+          <label class="chk" onclick="toggleChk(this)"><span class="chkbox"></span>無</label>
+          <label class="chk" onclick="toggleChk(this)"><span class="chkbox"></span>有</label>
+        </div>
+        <div class="fgrid" style="margin-bottom:18px">
+          <div class="ffield">
+            <label class="flabel">種類</label>
+            <input type="text" class="finput" id="f_pet_type" placeholder="貓、狗⋯⋯">
+          </div>
+          <div class="ffield">
+            <label class="flabel">數量</label>
+            <input type="text" class="finput" id="f_pet_count" placeholder="＿＿">
+          </div>
+        </div>
+        <p class="qsub" style="margin-bottom:12px">希望特別考量（可複選）</p>
+        <div class="cards cards-sm">
+          <div class="copt" data-g="pet_needs" data-v="清潔方便" onclick="toggleCard(this,true)">清潔方便</div>
+          <div class="copt" data-g="pet_needs" data-v="動線安全" onclick="toggleCard(this,true)">動線安全</div>
+          <div class="copt" data-g="pet_needs" data-v="收納／用品區" onclick="toggleCard(this,true)">收納／用品區</div>
+          <div class="copt" data-g="pet_needs" data-v="寵物休憩區" onclick="toggleCard(this,true)">寵物休憩區</div>
+          <div class="copt" data-g="pet_needs" data-v="耐抓耐磨材質" onclick="toggleCard(this,true)">耐抓耐磨材質</div>
+        </div>
+        <input type="text" class="finput extra-input" id="pet_needs_other" placeholder="其他：＿＿＿＿">
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q2</span>家中最常發生的生活情境（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="life_scenes" data-v="喜歡一起吃飯聊天" onclick="toggleCard(this,true)">喜歡一起吃飯聊天</div>
+        <div class="copt" data-g="life_scenes" data-v="喜歡一起追劇／看電影" onclick="toggleCard(this,true)">喜歡一起追劇／看電影</div>
+        <div class="copt" data-g="life_scenes" data-v="各自待在不同空間" onclick="toggleCard(this,true)">各自待在不同空間</div>
+        <div class="copt" data-g="life_scenes" data-v="喜歡在家安靜放鬆" onclick="toggleCard(this,true)">喜歡在家安靜放鬆</div>
+        <div class="copt" data-g="life_scenes" data-v="喜歡邀請親友聚會" onclick="toggleCard(this,true)">喜歡邀請親友聚會</div>
+        <div class="copt" data-g="life_scenes" data-v="喜歡料理與共享餐食" onclick="toggleCard(this,true)">喜歡料理與共享餐食</div>
+        <div class="copt" data-g="life_scenes" data-v="喜歡閱讀／工作" onclick="toggleCard(this,true)">喜歡閱讀／工作</div>
+        <div class="copt" data-g="life_scenes" data-v="喜歡音樂／品酒／收藏" onclick="toggleCard(this,true)">喜歡音樂／品酒／收藏</div>
+        <div class="copt" data-g="life_scenes" data-v="重視親子陪伴" onclick="toggleCard(this,true)">重視親子陪伴</div>
+        <div class="copt" data-g="life_scenes" data-v="重視個人獨處時間" onclick="toggleCard(this,true)">重視個人獨處時間</div>
+      </div>
+      <input type="text" class="finput extra-input" id="life_scenes_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q3</span>平日晚上的生活節奏（可複選）</div>
+      <div class="cards">
+        <div class="copt" data-g="weeknight" data-v="想放鬆休息" onclick="toggleCard(this,true)">想放鬆休息</div>
+        <div class="copt" data-g="weeknight" data-v="一起聊天吃飯" onclick="toggleCard(this,true)">一起聊天吃飯</div>
+        <div class="copt" data-g="weeknight" data-v="看劇／電影" onclick="toggleCard(this,true)">看劇／電影</div>
+        <div class="copt" data-g="weeknight" data-v="工作或閱讀" onclick="toggleCard(this,true)">工作或閱讀</div>
+        <div class="copt" data-g="weeknight" data-v="運動／瑜伽" onclick="toggleCard(this,true)">運動／瑜伽</div>
+        <div class="copt" data-g="weeknight" data-v="陪伴孩子" onclick="toggleCard(this,true)">陪伴孩子</div>
+        <div class="copt" data-g="weeknight" data-v="各自有自己的時間" onclick="toggleCard(this,true)">各自有自己的時間</div>
+      </div>
+      <input type="text" class="finput extra-input" id="weeknight_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q4</span>假日的家，比較像？（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="weekend" data-v="安靜放空休息" onclick="toggleCard(this,true)">安靜放空休息</div>
+        <div class="copt" data-g="weekend" data-v="下廚料理" onclick="toggleCard(this,true)">下廚料理</div>
+        <div class="copt" data-g="weekend" data-v="家庭活動" onclick="toggleCard(this,true)">家庭活動</div>
+        <div class="copt" data-g="weekend" data-v="招待朋友聚會" onclick="toggleCard(this,true)">招待朋友聚會</div>
+        <div class="copt" data-g="weekend" data-v="看電影／追劇" onclick="toggleCard(this,true)">看電影／追劇</div>
+        <div class="copt" data-g="weekend" data-v="閱讀／工作" onclick="toggleCard(this,true)">閱讀／工作</div>
+        <div class="copt" data-g="weekend" data-v="外出後回家休息" onclick="toggleCard(this,true)">外出後回家休息</div>
+      </div>
+      <input type="text" class="finput extra-input" id="weekend_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q5</span>目前生活中最困擾的地方（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="pain_points" data-v="收納不足" onclick="toggleCard(this,true)">收納不足</div>
+        <div class="copt" data-g="pain_points" data-v="動線不順" onclick="toggleCard(this,true)">動線不順</div>
+        <div class="copt" data-g="pain_points" data-v="光線不足" onclick="toggleCard(this,true)">光線不足</div>
+        <div class="copt" data-g="pain_points" data-v="空間容易凌亂" onclick="toggleCard(this,true)">空間容易凌亂</div>
+        <div class="copt" data-g="pain_points" data-v="回到家無法真正放鬆" onclick="toggleCard(this,true)">回到家無法真正放鬆</div>
+        <div class="copt" data-g="pain_points" data-v="家人互動不足" onclick="toggleCard(this,true)">家人互動不足</div>
+        <div class="copt" data-g="pain_points" data-v="廚房不好使用" onclick="toggleCard(this,true)">廚房不好使用</div>
+        <div class="copt" data-g="pain_points" data-v="小孩活動空間不足" onclick="toggleCard(this,true)">小孩活動空間不足</div>
+        <div class="copt" data-g="pain_points" data-v="缺乏工作／閱讀空間" onclick="toggleCard(this,true)">缺乏工作／閱讀空間</div>
+        <div class="copt" data-g="pain_points" data-v="沒有屬於自己的角落" onclick="toggleCard(this,true)">沒有屬於自己的角落</div>
+      </div>
+      <input type="text" class="finput extra-input" id="pain_points_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q6</span>希望裝修後最大的改變是？</div>
+      <p class="qsub">希望回家後，可以——</p>
+      <textarea class="ftextarea ftextarea-lg" id="f_biggest_change" placeholder="請描述您最期待的改變⋯⋯"></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-ghost" onclick="goTo(2)">上一步</button>
+      <button class="btn-primary" onclick="goTo(4)">下一步</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 4 ══ -->
+<div class="page" id="page-4">
+  <div class="p-wrap">
+    <p class="s-label">Page 04</p>
+    <h2 class="s-title">空間功能與感受偏好</h2>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q1</span>希望強化的生活功能（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="functions" data-v="收納效率" onclick="toggleCard(this,true)">收納效率</div>
+        <div class="copt" data-g="functions" data-v="空間放鬆感" onclick="toggleCard(this,true)">空間放鬆感</div>
+        <div class="copt" data-g="functions" data-v="家人互動" onclick="toggleCard(this,true)">家人互動</div>
+        <div class="copt" data-g="functions" data-v="儀式感／生活質感" onclick="toggleCard(this,true)">儀式感／生活質感</div>
+        <div class="copt" data-g="functions" data-v="工作效率" onclick="toggleCard(this,true)">工作效率</div>
+        <div class="copt" data-g="functions" data-v="閱讀與沉靜空間" onclick="toggleCard(this,true)">閱讀與沉靜空間</div>
+        <div class="copt" data-g="functions" data-v="招待親友機能" onclick="toggleCard(this,true)">招待親友機能</div>
+        <div class="copt" data-g="functions" data-v="親子陪伴" onclick="toggleCard(this,true)">親子陪伴</div>
+        <div class="copt" data-g="functions" data-v="長輩友善" onclick="toggleCard(this,true)">長輩友善</div>
+        <div class="copt" data-g="functions" data-v="光線與氛圍" onclick="toggleCard(this,true)">光線與氛圍</div>
+        <div class="copt" data-g="functions" data-v="展示收藏" onclick="toggleCard(this,true)">展示收藏</div>
+        <div class="copt" data-g="functions" data-v="居家療癒感" onclick="toggleCard(this,true)">居家療癒感</div>
+      </div>
+      <input type="text" class="finput extra-input" id="functions_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q2</span>是否有特別需求或設備規劃？</div>
+      <textarea class="ftextarea" id="f_special_needs" placeholder="例如：投影設備、按摩椅空間、鋼琴室⋯⋯"></textarea>
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q3</span>希望保留或延續的生活習慣／家具／設備</div>
+      <textarea class="ftextarea" id="f_preserve" placeholder="例如：老家的木桌、進口廚具、收藏品⋯⋯"></textarea>
+    </div>
+
+    <hr class="divider">
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q4</span>理想中的家，希望帶來什麼感受？（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="feeling_want" data-v="放鬆療癒、回家可以真正休息" onclick="toggleCard(this,true)">放鬆療癒、回家可以真正休息</div>
+        <div class="copt" data-g="feeling_want" data-v="安靜沉穩、有安心感" onclick="toggleCard(this,true)">安靜沉穩、有安心感</div>
+        <div class="copt" data-g="feeling_want" data-v="明亮自然、空氣感充足" onclick="toggleCard(this,true)">明亮自然、空氣感充足</div>
+        <div class="copt" data-g="feeling_want" data-v="精品感但低調、不過度張揚" onclick="toggleCard(this,true)">精品感但低調、不過度張揚</div>
+        <div class="copt" data-g="feeling_want" data-v="有飯店質感，但不冰冷" onclick="toggleCard(this,true)">有飯店質感，但不冰冷</div>
+        <div class="copt" data-g="feeling_want" data-v="喜歡留白與呼吸感" onclick="toggleCard(this,true)">喜歡留白與呼吸感</div>
+        <div class="copt" data-g="feeling_want" data-v="有美術館般的安定氛圍" onclick="toggleCard(this,true)">有美術館般的安定氛圍</div>
+        <div class="copt" data-g="feeling_want" data-v="溫暖、有陪伴感" onclick="toggleCard(this,true)">溫暖、有陪伴感</div>
+        <div class="copt" data-g="feeling_want" data-v="喜歡自然與材質溫度" onclick="toggleCard(this,true)">喜歡自然與材質溫度</div>
+        <div class="copt" data-g="feeling_want" data-v="喜歡俐落、乾淨、有秩序" onclick="toggleCard(this,true)">喜歡俐落、乾淨、有秩序</div>
+        <div class="copt" data-g="feeling_want" data-v="喜歡有儀式感的生活" onclick="toggleCard(this,true)">喜歡有儀式感的生活</div>
+        <div class="copt" data-g="feeling_want" data-v="喜歡藝術、收藏或故事感" onclick="toggleCard(this,true)">喜歡藝術、收藏或故事感</div>
+        <div class="copt" data-g="feeling_want" data-v="希望空間看起來成熟穩定" onclick="toggleCard(this,true)">希望空間看起來成熟穩定</div>
+        <div class="copt" data-g="feeling_want" data-v="希望空間看起來輕盈放鬆" onclick="toggleCard(this,true)">希望空間看起來輕盈放鬆</div>
+      </div>
+      <input type="text" class="finput extra-input" id="feeling_want_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q5</span>比較不喜歡的空間感覺（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="feeling_dislike" data-v="太冰冷、太豪華、太張揚" onclick="toggleCard(this,true)">太冰冷、太豪華、太張揚</div>
+        <div class="copt" data-g="feeling_dislike" data-v="太樣品屋感、太飯店感" onclick="toggleCard(this,true)">太樣品屋感、太飯店感</div>
+        <div class="copt" data-g="feeling_dislike" data-v="沒有生活感" onclick="toggleCard(this,true)">沒有生活感</div>
+        <div class="copt" data-g="feeling_dislike" data-v="太木作感、太滿、太複雜" onclick="toggleCard(this,true)">太木作感、太滿、太複雜</div>
+        <div class="copt" data-g="feeling_dislike" data-v="資訊量太多、沒有層次" onclick="toggleCard(this,true)">資訊量太多、沒有層次</div>
+        <div class="copt" data-g="feeling_dislike" data-v="太暗、太白" onclick="toggleCard(this,true)">太暗、太白</div>
+        <div class="copt" data-g="feeling_dislike" data-v="太有壓迫感" onclick="toggleCard(this,true)">太有壓迫感</div>
+        <div class="copt" data-g="feeling_dislike" data-v="太過流行、容易退流行" onclick="toggleCard(this,true)">太過流行、容易退流行</div>
+        <div class="copt" data-g="feeling_dislike" data-v="太制式、沒有個性" onclick="toggleCard(this,true)">太制式、沒有個性</div>
+      </div>
+      <input type="text" class="finput extra-input" id="feeling_dislike_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <hr class="divider">
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q6</span>空間意象光譜</div>
+      <p class="qsub">請移動滑塊，標示您偏好的空間調性（1 偏左側 ・ 5 偏右側）</p>
+      <div class="slider-wrap">
+        <div class="slider-row">
+          <span class="sl-left">安靜沉穩</span>
+          <input type="range" min="1" max="5" value="3" id="sl_calm">
+          <span class="sl-right">明亮開放</span>
+        </div>
+        <div class="slider-row">
+          <span class="sl-left">溫暖柔和</span>
+          <input type="range" min="1" max="5" value="3" id="sl_warm">
+          <span class="sl-right">俐落理性</span>
+        </div>
+        <div class="slider-row">
+          <span class="sl-left">自然放鬆</span>
+          <input type="range" min="1" max="5" value="3" id="sl_natural">
+          <span class="sl-right">精品精緻</span>
+        </div>
+        <div class="slider-row">
+          <span class="sl-left">留白簡約</span>
+          <input type="range" min="1" max="5" value="3" id="sl_minimal">
+          <span class="sl-right">豐富細節</span>
+        </div>
+        <div class="slider-row">
+          <span class="sl-left">慢節奏</span>
+          <input type="range" min="1" max="5" value="3" id="sl_pace">
+          <span class="sl-right">有儀式感</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-ghost" onclick="goTo(3)">上一步</button>
+      <button class="btn-primary" onclick="goTo(5)">下一步</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 5 ══ -->
+<div class="page" id="page-5">
+  <div class="p-wrap">
+    <p class="s-label">Page 05</p>
+    <h2 class="s-title">風格美學、色彩與靈感蒐集</h2>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q1</span>喜歡的生活畫面（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="life_pics" data-v="能夠很快放鬆下來" onclick="toggleCard(this,true)">能夠很快放鬆下來</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡待在客廳聊天" onclick="toggleCard(this,true)">喜歡待在客廳聊天</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡有舒服的光線與角落" onclick="toggleCard(this,true)">喜歡有舒服的光線與角落</div>
+        <div class="copt" data-g="life_pics" data-v="想待在家裡，不想一直往外跑" onclick="toggleCard(this,true)">想待在家裡，不想一直往外跑</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡泡澡／香氛／療癒感" onclick="toggleCard(this,true)">喜歡泡澡／香氛／療癒感</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡招待朋友來家裡" onclick="toggleCard(this,true)">喜歡招待朋友來家裡</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡閱讀、喝咖啡、發呆" onclick="toggleCard(this,true)">喜歡閱讀、喝咖啡、發呆</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡孩子自在玩耍" onclick="toggleCard(this,true)">喜歡孩子自在玩耍</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡料理與共享餐桌" onclick="toggleCard(this,true)">喜歡料理與共享餐桌</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡空間乾淨有秩序" onclick="toggleCard(this,true)">喜歡空間乾淨有秩序</div>
+        <div class="copt" data-g="life_pics" data-v="喜歡收藏展示" onclick="toggleCard(this,true)">喜歡收藏展示</div>
+      </div>
+      <input type="text" class="finput extra-input" id="life_pics_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q2</span>光線偏好（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="lighting" data-v="喜歡自然採光" onclick="toggleCard(this,true)">喜歡自然採光</div>
+        <div class="copt" data-g="lighting" data-v="喜歡柔和、均勻的照明" onclick="toggleCard(this,true)">喜歡柔和、均勻的照明</div>
+        <div class="copt" data-g="lighting" data-v="喜歡間接燈光與氛圍感" onclick="toggleCard(this,true)">喜歡間接燈光與氛圍感</div>
+        <div class="copt" data-g="lighting" data-v="喜歡有光影層次" onclick="toggleCard(this,true)">喜歡有光影層次</div>
+        <div class="copt" data-g="lighting" data-v="喜歡戲劇感燈光" onclick="toggleCard(this,true)">喜歡戲劇感燈光</div>
+        <div class="copt" data-g="lighting" data-v="喜歡飯店式燈光氛圍" onclick="toggleCard(this,true)">喜歡飯店式燈光氛圍</div>
+        <div class="copt" data-g="lighting" data-v="偏好較亮的生活照明" onclick="toggleCard(this,true)">偏好較亮的生活照明</div>
+        <div class="copt" data-g="lighting" data-v="偏好柔和放鬆的照明" onclick="toggleCard(this,true)">偏好柔和放鬆的照明</div>
+      </div>
+      <input type="text" class="finput extra-input" id="lighting_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q3</span>對於色彩的偏好（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="color_pref" data-v="米白與暖白色系" onclick="toggleCard(this,true)">米白與暖白色系</div>
+        <div class="copt" data-g="color_pref" data-v="大地色系" onclick="toggleCard(this,true)">大地色系</div>
+        <div class="copt" data-g="color_pref" data-v="灰階與中性色" onclick="toggleCard(this,true)">灰階與中性色</div>
+        <div class="copt" data-g="color_pref" data-v="木質自然色調" onclick="toggleCard(this,true)">木質自然色調</div>
+        <div class="copt" data-g="color_pref" data-v="深色沉穩色調" onclick="toggleCard(this,true)">深色沉穩色調</div>
+        <div class="copt" data-g="color_pref" data-v="黑白俐落對比" onclick="toggleCard(this,true)">黑白俐落對比</div>
+        <div class="copt" data-g="color_pref" data-v="喜歡帶一些色彩層次" onclick="toggleCard(this,true)">喜歡帶一些色彩層次</div>
+        <div class="copt" data-g="color_pref" data-v="不喜歡太多顏色" onclick="toggleCard(this,true)">不喜歡太多顏色</div>
+        <div class="copt" data-g="color_pref" data-v="尚不確定，希望一起討論" onclick="toggleCard(this,true)">尚不確定，希望一起討論</div>
+      </div>
+      <input type="text" class="finput extra-input" id="color_pref_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q4</span>喜歡的材質（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="materials" data-v="淺色木質" onclick="toggleCard(this,true)">淺色木質</div>
+        <div class="copt" data-g="materials" data-v="深色木質" onclick="toggleCard(this,true)">深色木質</div>
+        <div class="copt" data-g="materials" data-v="天然石材／石紋" onclick="toggleCard(this,true)">天然石材／石紋</div>
+        <div class="copt" data-g="materials" data-v="礦物塗料／特殊漆面" onclick="toggleCard(this,true)">礦物塗料／特殊漆面<div class="copt-sub">Liaigre · John Pawson 調性</div></div>
+        <div class="copt" data-g="materials" data-v="金屬元素" onclick="toggleCard(this,true)">金屬元素</div>
+        <div class="copt" data-g="materials" data-v="玻璃／長虹玻璃" onclick="toggleCard(this,true)">玻璃／長虹玻璃</div>
+        <div class="copt" data-g="materials" data-v="布料與柔性材質" onclick="toggleCard(this,true)">布料與柔性材質</div>
+        <div class="copt" data-g="materials" data-v="皮革元素" onclick="toggleCard(this,true)">皮革元素</div>
+        <div class="copt" data-g="materials" data-v="磁磚" onclick="toggleCard(this,true)">磁磚</div>
+        <div class="copt" data-g="materials" data-v="自然紋理材質" onclick="toggleCard(this,true)">自然紋理材質</div>
+        <div class="copt" data-g="materials" data-v="水泥感／礦物感" onclick="toggleCard(this,true)">水泥感／礦物感</div>
+        <div class="copt" data-g="materials" data-v="尚不確定，希望一起討論" onclick="toggleCard(this,true)">尚不確定，希望一起討論</div>
+      </div>
+      <input type="text" class="finput extra-input" id="materials_other" placeholder="其他材質：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q5</span>空間風格方向（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="style_dir" data-v="現代簡約" onclick="toggleCard(this,true)">現代簡約</div>
+        <div class="copt" data-g="style_dir" data-v="日式／侘寂感" onclick="toggleCard(this,true)">日式／侘寂感</div>
+        <div class="copt" data-g="style_dir" data-v="北歐風" onclick="toggleCard(this,true)">北歐風</div>
+        <div class="copt" data-g="style_dir" data-v="美式風格" onclick="toggleCard(this,true)">美式風格</div>
+        <div class="copt" data-g="style_dir" data-v="混搭風格" onclick="toggleCard(this,true)">混搭風格</div>
+        <div class="copt" data-g="style_dir" data-v="自然現代風" onclick="toggleCard(this,true)">自然現代風</div>
+        <div class="copt" data-g="style_dir" data-v="精品住宅風格" onclick="toggleCard(this,true)">精品住宅風格</div>
+        <div class="copt" data-g="style_dir" data-v="飯店式質感住宅" onclick="toggleCard(this,true)">飯店式質感住宅</div>
+        <div class="copt" data-g="style_dir" data-v="尚不確定，希望設計師協助整合" onclick="toggleCard(this,true)">尚不確定，希望設計師協助整合</div>
+      </div>
+      <input type="text" class="finput extra-input" id="style_dir_other" placeholder="其他風格：＿＿＿＿">
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-ghost" onclick="goTo(4)">上一步</button>
+      <button class="btn-primary" onclick="goTo(6)">下一步</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 6 ══ -->
+<div class="page" id="page-6">
+  <div class="p-wrap">
+    <p class="s-label">Page 06</p>
+    <h2 class="s-title">靈感與未來的家</h2>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q1</span>是否已有喜歡的空間參考？</div>
+      <div class="rgroup" style="margin-bottom:20px">
+        <div class="ropt" data-g="has_ref" data-v="有" onclick="toggleRadio(this);document.getElementById('ref_block').style.display='block'">有</div>
+        <div class="ropt" data-g="has_ref" data-v="沒有，想與設計師一起探索" onclick="toggleRadio(this);document.getElementById('ref_block').style.display='none'">沒有，想與設計師一起探索</div>
+      </div>
+      <div id="ref_block" style="display:none">
+        <p class="qsub" style="margin-bottom:14px">歡迎勾選提供管道</p>
+        <div class="ref-ch">
+          <div class="copt" data-g="ref_channels" data-v="Pinterest" onclick="toggleCard(this,true)">Pinterest</div>
+          <div class="copt" data-g="ref_channels" data-v="Instagram" onclick="toggleCard(this,true)">Instagram</div>
+          <div class="copt" data-g="ref_channels" data-v="小紅書" onclick="toggleCard(this,true)">小紅書</div>
+          <div class="copt" data-g="ref_channels" data-v="喜歡的飯店" onclick="toggleCard(this,true)">喜歡的飯店</div>
+          <div class="copt" data-g="ref_channels" data-v="喜歡的咖啡廳／餐廳" onclick="toggleCard(this,true)">咖啡廳／餐廳</div>
+          <div class="copt" data-g="ref_channels" data-v="喜歡的住宅案例" onclick="toggleCard(this,true)">住宅案例</div>
+          <div class="copt" data-g="ref_channels" data-v="其他" onclick="toggleCard(this,true)">其他</div>
+        </div>
+        <div class="ffield" style="margin-top:10px">
+          <label class="flabel">連結或名稱</label>
+          <textarea class="ftextarea" id="f_ref_links" placeholder="貼上連結或填寫名稱⋯⋯" style="min-height:80px"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q2</span>喜歡這些空間的原因是（可複選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="why_like" data-v="光線氛圍" onclick="toggleCard(this,true)">光線氛圍</div>
+        <div class="copt" data-g="why_like" data-v="材質搭配" onclick="toggleCard(this,true)">材質搭配</div>
+        <div class="copt" data-g="why_like" data-v="空間比例與留白" onclick="toggleCard(this,true)">空間比例與留白</div>
+        <div class="copt" data-g="why_like" data-v="色彩感受" onclick="toggleCard(this,true)">色彩感受</div>
+        <div class="copt" data-g="why_like" data-v="收納方式" onclick="toggleCard(this,true)">收納方式</div>
+        <div class="copt" data-g="why_like" data-v="放鬆感" onclick="toggleCard(this,true)">放鬆感</div>
+        <div class="copt" data-g="why_like" data-v="家具配置" onclick="toggleCard(this,true)">家具配置</div>
+        <div class="copt" data-g="why_like" data-v="成熟穩定的氣質" onclick="toggleCard(this,true)">成熟穩定的氣質</div>
+        <div class="copt" data-g="why_like" data-v="生活感與溫度" onclick="toggleCard(this,true)">生活感與溫度</div>
+        <div class="copt" data-g="why_like" data-v="有質感但不過度裝飾" onclick="toggleCard(this,true)">有質感但不過度裝飾</div>
+        <div class="copt" data-g="why_like" data-v="看起來舒服、久看不膩" onclick="toggleCard(this,true)">看起來舒服、久看不膩</div>
+        <div class="copt" data-g="why_like" data-v="不知道原因，就是喜歡" onclick="toggleCard(this,true)">不知道原因，就是喜歡</div>
+      </div>
+      <input type="text" class="finput extra-input" id="why_like_other" placeholder="其他：＿＿＿＿">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q3</span>喜歡的品牌、飯店、空間 ／ 希望避免的元素</div>
+      <div class="dual">
+        <div class="ffield">
+          <label class="flabel">喜歡的品牌／飯店／空間類型</label>
+          <textarea class="ftextarea" id="f_like_brands" placeholder="例如：Muji、The Upper House、安縵⋯⋯"></textarea>
+        </div>
+        <div class="ffield">
+          <label class="flabel">不喜歡或希望避免的元素</label>
+          <textarea class="ftextarea" id="f_avoid" placeholder="例如：太多木作、水晶燈、金色裝飾⋯⋯"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q4</span>如果用一句話形容理想中的家，它像⋯⋯</div>
+      <p class="qsub">例如：像一間能深呼吸的飯店、像一家人願意停留的地方、像被溫柔接住</p>
+      <input type="text" class="finput" id="f_one_sentence" placeholder="像⋯⋯" style="font-size:17px;padding:14px 0">
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q5</span>未來的家更像哪種場域（單選）</div>
+      <div class="cards cards-wide">
+        <div class="copt" data-g="space_type" data-v="飯店般放鬆" onclick="toggleRadio(this)">飯店般放鬆</div>
+        <div class="copt" data-g="space_type" data-v="美術館般安定" onclick="toggleRadio(this)">美術館般安定</div>
+        <div class="copt" data-g="space_type" data-v="咖啡館般舒服" onclick="toggleRadio(this)">咖啡館般舒服</div>
+        <div class="copt" data-g="space_type" data-v="溫暖陪伴的家" onclick="toggleRadio(this)">溫暖陪伴的家</div>
+        <div class="copt" data-g="space_type" data-v="安靜沉穩的避風港" onclick="toggleRadio(this)">安靜沉穩的避風港</div>
+        <div class="copt" data-g="space_type" data-v="有故事感與收藏感" onclick="toggleRadio(this)">有故事感與收藏感</div>
+        <div class="copt" data-g="space_type" data-v="自然、留白、有呼吸感" onclick="toggleRadio(this)">自然、留白、有呼吸感</div>
+        <div class="copt" data-g="space_type" data-v="成熟穩定、有質感" onclick="toggleRadio(this)">成熟穩定、有質感</div>
+        <div class="copt" data-g="space_type" data-v="明亮、輕盈、好整理" onclick="toggleRadio(this)">明亮、輕盈、好整理</div>
+        <div class="copt" data-g="space_type" data-v="尚不確定，希望一起探索" onclick="toggleRadio(this)">尚不確定，希望一起探索</div>
+      </div>
+    </div>
+
+    <div class="qblock">
+      <div class="qlabel"><span class="qnum">Q6</span>對這次空間規劃，還有任何期待或想說的嗎？</div>
+      <textarea class="ftextarea ftextarea-lg" id="f_final_note" placeholder="任何期待、擔憂、或想讓設計師知道的事⋯⋯"></textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="btn-ghost" onclick="goTo(5)">上一步</button>
+      <button class="btn-primary" onclick="submitForm()">提交（梳理日常）</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 7 : DONE ══ -->
+<div class="page" id="page-7">
+  <div class="done-wrap">
+    <div class="done-text">
+      <p>家的樣子，不只是風格的選擇。</p><br>
+      <p>更像是一種生活方式的整理——整理習慣、關係、情緒與日常。</p><br>
+      <p>因此在設計初期，比起急著決定風格，更希望先理解真正的生活需求與期待。</p><br>
+      <p>期待一起慢慢梳理，找到最適合的居住節奏與空間樣貌。</p>
+      <div class="done-sig">—— 若善設計 Reason Design</div>
+    </div>
+
+    <p class="s-label" style="margin-bottom:20px">後續流程 · Process</p>
+    <div class="process-grid">
+      <div class="process-card"><div class="process-n">01 →</div><div class="process-t">需求探索</div></div>
+      <div class="process-card"><div class="process-n">02 →</div><div class="process-t">平面配置</div></div>
+      <div class="process-card"><div class="process-n">03 →</div><div class="process-t">風格整合</div></div>
+      <div class="process-card"><div class="process-n">04 →</div><div class="process-t">完整設計</div></div>
+      <div class="process-card"><div class="process-n">05 →</div><div class="process-t">施工監管</div></div>
+      <div class="process-card"><div class="process-n">06</div><div class="process-t">完工售後陪伴</div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+const PAGES=[
+  {label:'引言序幕',en:'Prologue'},
+  {label:'基本資訊',en:'Basic Info'},
+  {label:'預算方向',en:'Budget'},
+  {label:'家庭生活',en:'Lifestyle'},
+  {label:'空間感受',en:'Space Feel'},
+  {label:'風格靈感',en:'Aesthetics'},
+  {label:'未來的家',en:'Future Home'},
+  {label:'完成',en:'Complete'},
+];
+let cur=0;
+
+function goTo(n){
+  const old=document.getElementById('page-'+cur);
+  old.classList.remove('visible');
+  setTimeout(()=>{
+    old.classList.remove('active');
+    cur=n;
+    const next=document.getElementById('page-'+n);
+    next.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    setTimeout(()=>{
+      next.classList.add('visible');
+      if(n===0){setTimeout(()=>{const t=document.getElementById('p0text');if(t)t.classList.add('visible')},150)}
+    },50);
+    updateProgress();
+  },420);
+}
+
+function updateProgress(){
+  const total=PAGES.length-1;
+  const pct=cur===0?0:(cur/total)*100;
+  document.getElementById('pFill').style.width=pct+'%';
+  document.getElementById('pName').textContent=PAGES[cur].en+' · '+PAGES[cur].label;
+  document.getElementById('pStep').textContent=cur===0?'— / —':cur+' / '+(total-1);
+}
+
+function toggleCard(el,multi){
+  if(multi){el.classList.toggle('sel')}
+  else{const g=el.dataset.g;document.querySelectorAll('[data-g="'+g+'"]').forEach(e=>e.classList.remove('sel'));el.classList.add('sel')}
+}
+
+function toggleRadio(el){
+  const g=el.dataset.g;
+  document.querySelectorAll('[data-g="'+g+'"]').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function toggleChk(el){
+  const box=el.querySelector('.chkbox');
+  box.classList.toggle('on');
+}
+
+function collect(){
+  const d={};
+  document.querySelectorAll('input[id],textarea[id]').forEach(el=>{if(el.id)d[el.id]=el.value});
+  const groups={};
+  document.querySelectorAll('[data-g].sel').forEach(el=>{
+    const g=el.dataset.g,v=el.dataset.v;
+    if(!groups[g])groups[g]=[];
+    const sub=el.querySelector('.copt-extra input');
+    groups[g].push(sub&&sub.value?v+' ('+sub.value+')':v);
+  });
+  Object.assign(d,groups);
+  ['sl_calm','sl_warm','sl_natural','sl_minimal','sl_pace'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)d[id]=+el.value;
+  });
+  return d;
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+function submitForm(){
+  const data=collect();
+  console.log('若善設計｜問卷結果',JSON.stringify(data,null,2));
+  toast('感謝填寫 · 若善設計將與您聯繫');
+  setTimeout(()=>goTo(7),900);
+}
+
+function exportPDF(){
+  toast('正在生成 PDF⋯⋯');
+  const el=document.getElementById('formEl');
+  html2pdf().set({
+    margin:[12,14,12,14],
+    filename:'若善設計_生活與空間需求探索表v2.pdf',
+    image:{type:'jpeg',quality:0.95},
+    html2canvas:{scale:2,useCORS:true,scrollY:0},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['avoid-all','css','legacy']}
+  }).from(el).save();
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const today=new Date().toISOString().split('T')[0];
+  const d=document.getElementById('f_date');
+  if(d)d.value=today;
+  const p0=document.getElementById('page-0');
+  p0.classList.add('active');
+  setTimeout(()=>{
+    p0.classList.add('visible');
+    setTimeout(()=>{const t=document.getElementById('p0text');if(t)t.classList.add('visible')},200);
+  },80);
+  updateProgress();
+});
+</script>
+</body>
+</html>
