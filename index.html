@@ -45,12 +45,6 @@ body{
   font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:var(--carbon);
 }
 .nav-brand em{color:var(--matte);font-style:normal;margin-left:10px;font-weight:300}
-.btn-pdf{
-  font-family:var(--font-en);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--carbon);background:transparent;border:1px solid var(--carbon);
-  padding:8px 22px;cursor:pointer;transition:all 0.4s ease;
-}
-.btn-pdf:hover{background:var(--carbon);color:var(--white)}
 
 /* ── PROGRESS ── */
 .progress-wrap{
@@ -74,15 +68,16 @@ body{
   display:none;opacity:0;transform:translateY(20px);
   transition:opacity 0.5s ease,transform 0.5s ease;
 }
-.page.active{display:block}
+.page.active{display:flex;flex-direction:column;min-height:calc(100vh - 120px)}
 .page.visible{opacity:1;transform:translateY(0)}
 
 /* ── PAGE 0 ── */
 .p0-wrap{
   max-width:660px;margin:0 auto;
-  padding:72px 48px 100px;
+  padding:72px 48px 48px;
+  flex:1;display:flex;flex-direction:column;
 }
-.p0-text{opacity:0;transform:translateY(28px);transition:opacity 0.9s ease,transform 0.9s ease}
+.p0-text{opacity:0;transform:translateY(28px);transition:opacity 0.9s ease,transform 0.9s ease;flex:1;display:flex;flex-direction:column}
 .p0-text.visible{opacity:1;transform:translateY(0)}
 .p0-eyebrow{
   font-family:var(--font-en);font-size:10px;letter-spacing:0.32em;
@@ -98,10 +93,10 @@ body{
   font-family:var(--font-en);font-size:11px;letter-spacing:0.22em;color:var(--matte);
   margin-top:52px;padding-top:24px;border-top:1px solid var(--line);
 }
-.p0-cta{margin-top:68px}
+.p0-cta{margin-top:auto;padding-top:36px}
 
 /* ── PAGE INNER ── */
-.p-wrap{max-width:880px;margin:0 auto;padding:56px 48px 100px}
+.p-wrap{max-width:880px;margin:0 auto;padding:56px 48px 48px;flex:1;display:flex;flex-direction:column}
 
 /* ── SECTION HEAD ── */
 .s-label{
@@ -267,7 +262,7 @@ input[type="range"]::-moz-range-thumb{
 
 .nav-btns{
   display:flex;justify-content:space-between;align-items:center;
-  margin-top:72px;padding-top:32px;border-top:1px solid var(--line);
+  margin-top:auto;padding-top:32px;border-top:1px solid var(--line);
 }
 
 /* ── TOAST ── */
@@ -285,7 +280,7 @@ input[type="range"]::-moz-range-thumb{
 .dual{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-bottom:44px}
 
 /* ── COMPLETION ── */
-.done-wrap{max-width:780px;margin:0 auto;padding:80px 48px 120px}
+.done-wrap{max-width:780px;margin:0 auto;padding:80px 48px 60px;flex:1;display:flex;flex-direction:column}
 .done-text{
   font-size:16px;line-height:2.3;letter-spacing:0.1em;color:var(--carbon);
   margin-bottom:80px;padding-bottom:60px;border-bottom:1px solid var(--line);
@@ -322,7 +317,7 @@ input[type="range"]::-moz-range-thumb{
   .slider-row{grid-template-columns:80px 1fr 80px;gap:12px}
   .sl-left,.sl-right{font-size:11px}
   .process-grid{grid-template-columns:1fr 1fr}
-  .nav-btns{flex-direction:column-reverse;gap:14px}
+  .nav-btns{flex-direction:column-reverse;gap:14px;padding-bottom:28px}
   .btn-primary,.btn-ghost{width:100%;text-align:center}
 }
 @media(max-width:480px){
@@ -331,6 +326,62 @@ input[type="range"]::-moz-range-thumb{
   .process-grid{grid-template-columns:1fr}
   .fgrid-3{grid-template-columns:1fr}
 }
+
+/* ── REPORT OVERLAY ── */
+.report-overlay{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(8,8,8,0.9);backdrop-filter:blur(12px);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:36px 16px 60px;
+}
+.report-overlay.show{display:block;animation:roFade 0.5s ease}
+@keyframes roFade{from{opacity:0}to{opacity:1}}
+#reportContent{max-width:640px;margin:0 auto;background:#FAF9F6}
+
+.report-cover{background:var(--carbon);color:var(--white);padding:52px 44px 44px}
+.report-cover-label{font-family:var(--font-en);font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:rgba(250,250,250,0.35);margin-bottom:28px}
+.report-cover-title{font-size:19px;font-weight:400;letter-spacing:0.16em;line-height:1.65;margin-bottom:32px}
+.report-cover-meta{display:flex;gap:24px;flex-wrap:wrap}
+.report-cover-meta-label{font-family:var(--font-en);font-size:8px;letter-spacing:0.26em;text-transform:uppercase;color:rgba(250,250,250,0.32);margin-bottom:4px;display:block}
+.report-cover-meta-value{font-size:13px;letter-spacing:0.1em;color:rgba(250,250,250,0.78)}
+
+.report-body{padding:44px}
+.report-section{margin-bottom:36px;padding-bottom:36px;border-bottom:1px solid #EAE6E0}
+.report-section:last-child{border-bottom:none;margin-bottom:0}
+.report-section-num{font-family:var(--font-en);font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:#A8A098;margin-bottom:7px}
+.report-section-title{font-size:15px;font-weight:400;letter-spacing:0.16em;color:var(--carbon);margin-bottom:16px}
+.report-section-content{font-size:13.5px;line-height:2.05;letter-spacing:0.08em;color:#3C3C3C}
+
+.report-tags{display:flex;flex-wrap:wrap;gap:7px}
+.report-tag{background:#EEE9E2;padding:5px 13px;font-size:12px;letter-spacing:0.08em;color:#3C3C3C}
+.report-keywords{display:flex;flex-wrap:wrap;gap:10px 18px}
+.report-keyword{font-size:17px;font-weight:500;letter-spacing:0.2em;color:var(--carbon);padding:5px 0;border-bottom:1px solid var(--carbon);min-width:68px;text-align:center}
+.report-num-list{list-style:none;padding:0;margin:0}
+.report-num-list li{display:flex;gap:13px;margin-bottom:10px;align-items:flex-start;padding-bottom:10px;border-bottom:1px solid #F0EDE7}
+.report-num-list li:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.report-li-num{font-family:var(--font-en);font-size:9px;letter-spacing:0.18em;color:#A8A098;margin-top:4px;white-space:nowrap}
+.report-table{width:100%;border-collapse:collapse}
+.report-table td{padding:12px 0;border-bottom:1px solid #F0EDE7;vertical-align:top}
+.report-table td:first-child{font-family:var(--font-en);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:#A8A098;width:68px}
+.report-table tr:last-child td{border-bottom:none}
+.report-ref-box{margin-top:16px;padding:13px 17px;background:#F2EEE8}
+.report-ref-box-label{font-family:var(--font-en);font-size:9px;letter-spacing:0.22em;color:#A8A098;text-transform:uppercase;margin-bottom:6px}
+.report-quote{margin-top:16px;font-style:italic;color:#A8A098;letter-spacing:0.12em;padding-left:14px;border-left:2px solid #E0DBD4;font-size:13px;line-height:1.9}
+
+.report-footer{background:var(--carbon);padding:28px 44px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.report-footer-brand{font-family:var(--font-en);font-size:9px;letter-spacing:0.24em;color:rgba(250,250,250,0.38)}
+.report-footer-actions{display:flex;gap:9px;flex-wrap:wrap}
+.btn-report-dl{font-family:var(--font-en);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--carbon);background:rgba(250,250,250,0.88);border:none;padding:11px 24px;cursor:pointer;transition:all 0.3s ease}
+.btn-report-dl:hover{background:#fff}
+.btn-report-close{font-family:var(--font-en);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(250,250,250,0.58);background:transparent;border:1px solid rgba(250,250,250,0.2);padding:11px 24px;cursor:pointer;transition:all 0.3s ease}
+.btn-report-close:hover{border-color:rgba(250,250,250,0.5);color:rgba(250,250,250,0.9)}
+@media(max-width:600px){
+  .report-body{padding:28px 20px}
+  .report-cover{padding:36px 20px 32px}
+  .report-footer{padding:22px 20px}
+  .report-footer-actions{width:100%}
+  .btn-report-dl,.btn-report-close{flex:1;text-align:center}
+}
 </style>
 </head>
 <body>
@@ -338,7 +389,6 @@ input[type="range"]::-moz-range-thumb{
 <!-- NAV -->
 <nav class="top-nav">
   <div class="nav-brand">Reason Design<em>若善設計</em></div>
-  <button class="btn-pdf" onclick="exportPDF()">Export PDF</button>
 </nav>
 
 <!-- PROGRESS -->
@@ -1072,6 +1122,8 @@ input[type="range"]::-moz-range-thumb{
 
 </main>
 
+<div id="reportOverlay" class="report-overlay"></div>
+
 <script>
 const PAGES=[
   {label:'引言序幕',en:'Prologue'},
@@ -1153,21 +1205,176 @@ function toast(msg){
 function submitForm(){
   const data=collect();
   console.log('若善設計｜問卷結果',JSON.stringify(data,null,2));
+  showReport(data);
+}
+
+function showReport(data){
+  const overlay=document.getElementById('reportOverlay');
+  overlay.innerHTML=generateReportHTML(data);
+  overlay.classList.add('show');
+  overlay.scrollTop=0;
+}
+
+function closeReport(){
+  document.getElementById('reportOverlay').classList.remove('show');
   toast('感謝填寫 · 若善設計將與您聯繫');
   setTimeout(()=>goTo(7),900);
 }
 
-function exportPDF(){
-  toast('正在生成 PDF⋯⋯');
-  const el=document.getElementById('formEl');
+function downloadReport(){
+  toast('正在生成診斷書 PDF⋯⋯');
+  const el=document.getElementById('reportContent');
   html2pdf().set({
-    margin:[12,14,12,14],
-    filename:'若善設計_生活與空間需求探索表v2.pdf',
+    margin:0,
+    filename:'若善設計_生活與空間診斷書.pdf',
     image:{type:'jpeg',quality:0.95},
-    html2canvas:{scale:2,useCORS:true,scrollY:0},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['avoid-all','css','legacy']}
+    html2canvas:{scale:2,useCORS:true},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
   }).from(el).save();
+}
+
+function arr(v){return Array.isArray(v)?v:(v?[v]:[]);}
+
+function rSection(num,en,zh,body){
+  return `<div class="report-section"><div class="report-section-num">${num} · ${en}</div><div class="report-section-title">${zh}</div><div class="report-section-content">${body}</div></div>`;
+}
+
+function generateReportHTML(data){
+  const name=data.f_name||'—';
+  const rawDate=data.f_date;
+  const date=rawDate?new Date(rawDate).toLocaleDateString('zh-TW'):new Date().toLocaleDateString('zh-TW');
+  const address=data.f_address||'—';
+  return `<div id="reportContent">
+<div class="report-cover">
+  <div class="report-cover-label">Reason Design · Space Diagnostic Report</div>
+  <div class="report-cover-title">《若善設計｜生活與空間診斷書》</div>
+  <div class="report-cover-meta">
+    <div><span class="report-cover-meta-label">Client</span><span class="report-cover-meta-value">${name}</span></div>
+    <div><span class="report-cover-meta-label">Date</span><span class="report-cover-meta-value">${date}</span></div>
+    <div><span class="report-cover-meta-label">Project</span><span class="report-cover-meta-value">${address}</span></div>
+  </div>
+</div>
+<div class="report-body">
+  ${rSection('01','Client Profile','客戶輪廓',buildProfile(data))}
+  ${rSection('02','Space Personality','空間人格分析',buildPersonality(data))}
+  ${rSection('03','Circulation','動線需求',buildCirculation(data))}
+  ${rSection('04','Emotional Keywords','情緒關鍵字',buildKeywords(data))}
+  ${rSection('05','Design Direction','設計方向建議',buildDirection(data))}
+  ${rSection('06','Materials & Colors','材質 / 色彩初步方向',buildMaterials(data))}
+  ${rSection('07','Priorities','優先順序',buildPriorities(data))}
+  ${rSection('08','Moodboard Draft','風格 Moodboard 初稿',buildMoodboard(data))}
+</div>
+<div class="report-footer">
+  <div class="report-footer-brand">Reason Design · 若善設計</div>
+  <div class="report-footer-actions">
+    <button class="btn-report-dl" onclick="downloadReport()">下載 PDF</button>
+    <button class="btn-report-close" onclick="closeReport()">完成</button>
+  </div>
+</div>
+</div>`;
+}
+
+function buildProfile(d){
+  const tags=[];
+  if(d.f_adults)tags.push(`成人 ${d.f_adults} 位`);
+  if(d.f_kids&&+d.f_kids>0)tags.push(`孩童 ${d.f_kids} 位`);
+  if(d.f_elders&&+d.f_elders>0)tags.push(`長輩 ${d.f_elders} 位`);
+  const ht=d.housing_type;if(ht&&ht!=='—')tags.push(ht);
+  if(d.f_area)tags.push(`${d.f_area} 坪`);
+  if(d.f_room)tags.push(`${d.f_room}房${d.f_hall||0}廳${d.f_bath||0}衛`);
+  if(d.budget)tags.push(`預算 ${d.budget}`);
+  const spaces=arr(d.spaces);
+  return `<div class="report-tags">${tags.map(t=>`<span class="report-tag">${t}</span>`).join('')}</div>${spaces.length?`<p style="margin-top:13px;font-size:12.5px;color:#8A8078;letter-spacing:0.08em">規劃空間：${spaces.join('、')}</p>`:''}`;
+}
+
+function buildPersonality(d){
+  const c=+d.sl_calm||3,w=+d.sl_warm||3,n=+d.sl_natural||3,m=+d.sl_minimal||3,p=+d.sl_pace||3;
+  const t=[];
+  if(c<=2)t.push('傾向安靜沉穩的空間調性');else if(c>=4)t.push('偏好明亮開放的空間感受');
+  if(w<=2)t.push('喜歡溫暖柔和的生活氛圍');else if(w>=4)t.push('偏好俐落理性的設計語言');
+  if(n<=2)t.push('嚮往自然放鬆的居住感');else if(n>=4)t.push('追求精品精緻的空間質感');
+  if(m<=2)t.push('偏好留白簡約、充足的呼吸感');else if(m>=4)t.push('欣賞豐富細節的設計表達');
+  if(p<=2)t.push('享受慢節奏的居家生活');else if(p>=4)t.push('重視有儀式感的生活方式');
+  const text=t.length?t.join('，')+'。':'空間調性均衡，具有多元的生活面向。';
+  const fw=arr(d.feeling_want);
+  return `<p>${text}</p>${fw.length?`<div class="report-tags" style="margin-top:13px">${fw.slice(0,5).map(f=>`<span class="report-tag">${f}</span>`).join('')}</div>`:''}`;
+}
+
+function buildCirculation(d){
+  const pp=arr(d.pain_points),ls=arr(d.life_scenes);
+  const items=[];
+  if(pp.includes('動線不順'))items.push('改善現有動線規劃，建立順暢的空間流動');
+  if(pp.includes('收納不足'))items.push('強化收納機能，以隱藏式手法維持整潔感');
+  if(pp.includes('光線不足'))items.push('引入更多採光或補充人工照明，改善空間明亮度');
+  if(ls.includes('喜歡邀請親友聚會'))items.push('公共空間開放動線，支援聚會與招待場景');
+  if(ls.includes('各自待在不同空間'))items.push('保有各空間獨立性，兼顧個人隱私動線');
+  if(ls.includes('重視親子陪伴'))items.push('親子互動動線流暢，兒童活動路徑安全整合');
+  if(d.f_elders&&+d.f_elders>0)items.push('無障礙通道考量，長輩活動安全動線設計');
+  if(!items.length)items.push('依實際空間條件，規劃最適合的生活動線');
+  return `<ul class="report-num-list">${items.map((n,i)=>`<li><span class="report-li-num">${String(i+1).padStart(2,'0')}</span><span>${n}</span></li>`).join('')}</ul>`;
+}
+
+function buildKeywords(d){
+  const km={'放鬆療癒、回家可以真正休息':'療癒','安靜沉穩、有安心感':'沉靜','明亮自然、空氣感充足':'通透','精品感但低調、不過度張揚':'低調精緻','有飯店質感，但不冰冷':'質感溫度','喜歡留白與呼吸感':'留白','有美術館般的安定氛圍':'靜定','溫暖、有陪伴感':'溫暖','喜歡自然與材質溫度':'材質感','喜歡俐落、乾淨、有秩序':'純粹','喜歡有儀式感的生活':'儀式','喜歡藝術、收藏或故事感':'故事感','希望空間看起來成熟穩定':'成熟','希望空間看起來輕盈放鬆':'輕盈'};
+  const sm={'日式／侘寂感':'侘寂','現代簡約':'簡約','北歐風':'北歐','精品住宅風格':'精品','飯店式質感住宅':'飯店感','自然現代風':'自然現代'};
+  const kws=[];
+  arr(d.feeling_want).forEach(f=>{if(km[f])kws.push(km[f]);});
+  arr(d.style_dir).forEach(s=>{if(sm[s]&&!kws.includes(sm[s]))kws.push(sm[s]);});
+  if(!kws.length)kws.push('溫暖','質感','放鬆');
+  const uniq=[...new Set(kws)].slice(0,6);
+  return `<div class="report-keywords">${uniq.map(k=>`<span class="report-keyword">${k}</span>`).join('')}</div>`;
+}
+
+function buildDirection(d){
+  const sd=arr(d.style_dir),fw=arr(d.feeling_want),pp=arr(d.pain_points);
+  let text='';
+  if(sd.includes('日式／侘寂感')||fw.includes('有美術館般的安定氛圍'))
+    text='空間設計以靜謐、內斂為主軸，運用自然材質與精準的比例留白，呈現侘寂美學的生活底蘊。';
+  else if(sd.includes('精品住宅風格')||fw.includes('精品感但低調、不過度張揚'))
+    text='以精品住宅的設計邏輯切入，強調材質質感與細部工藝，在低調中彰顯品味，避免過度裝飾的視覺干擾。';
+  else if(sd.includes('飯店式質感住宅')||fw.includes('有飯店質感，但不冰冷'))
+    text='融入飯店設計的服務感與精緻度，同時注入居家溫度，讓空間具備儀式感的生活體驗，但不失放鬆自在的家感。';
+  else if(fw.includes('放鬆療癒、回家可以真正休息')||fw.includes('溫暖、有陪伴感'))
+    text='以療癒、溫暖為核心設計語言，透過柔和的光線、自然的材質溫度與舒適的動線，打造回家就能真正放鬆的居所。';
+  else if(fw.includes('明亮自然、空氣感充足')||fw.includes('喜歡留白與呼吸感'))
+    text='以自然採光與留白為設計核心，透過輕盈的空間比例與自然材質，創造有呼吸感的居住環境。';
+  else
+    text='以客戶的真實生活習慣為出發點，整合空間機能與美感方向，打造真正貼近居住者需求的空間。';
+  if(pp.includes('收納不足'))text+='將大量收納機能整合於設計中，以隱藏式手法維持空間整潔感。';
+  const os=d.f_one_sentence;
+  return `<p>${text}</p>${os?`<div class="report-quote">"${os}"</div>`:''}`;
+}
+
+function buildMaterials(d){
+  const mat=arr(d.materials).filter(m=>m!=='尚不確定，希望一起討論');
+  const col=arr(d.color_pref).filter(c=>c!=='尚不確定，希望一起討論');
+  const lit=arr(d.lighting);
+  return `<table class="report-table"><tr><td>Color</td><td>${col.length?col.join('、'):'待與設計師共同確認'}</td></tr><tr><td>Material</td><td>${mat.length?mat.join('、'):'待深入討論'}</td></tr><tr><td>Light</td><td>${lit.length?lit.slice(0,3).join('、'):'依空間需求調整'}</td></tr></table>`;
+}
+
+function buildPriorities(d){
+  const pr=arr(d.priorities),bf=arr(d.budget_focus),all=[...pr,...bf];
+  if(!all.length)return '<p>將於初次會議時共同確認優先項目。</p>';
+  const bn=d.budget?`<p style="font-size:12px;color:#A8A098;letter-spacing:0.08em;margin-top:10px">預算方向：${d.budget}</p>`:'';
+  return `<ul class="report-num-list">${all.slice(0,6).map((p,i)=>`<li><span class="report-li-num">${String(i+1).padStart(2,'0')}</span><span>${p}</span></li>`).join('')}</ul>${bn}`;
+}
+
+function buildMoodboard(d){
+  const sd=arr(d.style_dir),fw=arr(d.feeling_want),mat=arr(d.materials),col=arr(d.color_pref);
+  const hasWarm=fw.includes('溫暖、有陪伴感')||col.includes('大地色系')||col.includes('木質自然色調');
+  const hasCool=col.includes('灰階與中性色')||col.includes('黑白俐落對比');
+  const hasNatural=mat.includes('淺色木質')||mat.includes('自然紋理材質')||mat.includes('天然石材／石紋');
+  const hasLuxury=sd.includes('精品住宅風格')||mat.includes('礦物塗料／特殊漆面');
+  let text='';
+  if(hasWarm&&hasNatural)text='以暖米、大地棕為主色調，搭配淺色木質與天然石紋，整體呈現溫暖而有機的自然感。光線以柔和漫射為主，局部加入暖白聚光，創造有溫度的空間層次。';
+  else if(hasCool&&hasLuxury)text='以深灰、石墨黑為基調，輔以礦物塗料肌理與精緻金屬細節，整體傾向低調精品的沉穩氣質。照明採間接光為主，強調材質本身的光澤與質感。';
+  else if(hasNatural)text='以自然材質為主軸，木質、石材與織物的搭配呈現有機的空間層次。色調以中性暖白為基底，保留材質本身的溫度與紋理，形成不刻意卻有個性的空間樣貌。';
+  else if(sd.includes('現代簡約')||fw.includes('喜歡留白與呼吸感'))text='以留白為設計語言，透過精準的比例與克制的材質選配，呈現現代簡約的空間詩意。色調偏向中性，重點落在線條、比例與光影的細膩拿捏。';
+  else if(sd.includes('日式／侘寂感'))text='以侘寂美學為靈感，選用帶有歲月感的自然材質，配以低飽和色調，讓空間呈現安靜、沉澱的東方氣質。';
+  else text='整體風格方向以空間實用性與美感平衡為目標，將依初次深度討論後，進一步整合完整的風格板與材質樣本。';
+  const rc=arr(d.ref_channels),rl=d.f_ref_links||'';
+  const ref=(rc.length||rl)?`<div class="report-ref-box"><div class="report-ref-box-label">Reference Sources</div>${rc.length?`<p style="font-size:13px;letter-spacing:0.08em">${rc.join('、')}</p>`:''}${rl?`<p style="font-size:12px;color:#8A8078;letter-spacing:0.06em;margin-top:5px">${rl}</p>`:''}</div>`:'';
+  return `<p>${text}</p>${ref}`;
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
