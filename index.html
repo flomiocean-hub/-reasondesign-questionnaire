@@ -1235,14 +1235,20 @@ async function submitForm(){
 }
 
 async function elToPdfBase64(el,opts){
-  const dataUri=await html2pdf().set(Object.assign({
-    margin:[10,8,10,8],
-    image:{type:'jpeg',quality:0.92},
-    html2canvas:{scale:2,useCORS:true,scrollY:0},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['css','legacy']}
-  },opts||{})).from(el).outputPdf('datauristring');
-  return (dataUri.split(',')[1])||'';
+  const hidden=[...el.querySelectorAll('.no-pdf')];
+  hidden.forEach(n=>n.style.display='none');
+  try{
+    const dataUri=await html2pdf().set(Object.assign({
+      margin:[10,8,10,8],
+      image:{type:'jpeg',quality:0.92},
+      html2canvas:{scale:2,useCORS:true,scrollY:0},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+      pagebreak:{mode:['css','legacy']}
+    },opts||{})).from(el).outputPdf('datauristring');
+    return (dataUri.split(',')[1])||'';
+  }finally{
+    hidden.forEach(n=>n.style.display='');
+  }
 }
 
 async function notifyDesigner(data){
@@ -1373,17 +1379,23 @@ function closeReport(){
   setTimeout(()=>goTo(7),900);
 }
 
-function downloadReport(){
+async function downloadReport(){
   toast('正在生成診斷書 PDF⋯⋯');
   const el=document.getElementById('reportContent');
-  html2pdf().set({
-    margin:[10,0,10,0],
-    filename:'若善設計_生活與空間診斷書.pdf',
-    image:{type:'jpeg',quality:0.95},
-    html2canvas:{scale:2,useCORS:true,scrollY:0},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-    pagebreak:{mode:['css','legacy']}
-  }).from(el).save();
+  const hidden=[...el.querySelectorAll('.no-pdf')];
+  hidden.forEach(n=>n.style.display='none');
+  try{
+    await html2pdf().set({
+      margin:[10,0,10,0],
+      filename:'若善設計_生活與空間診斷書.pdf',
+      image:{type:'jpeg',quality:0.95},
+      html2canvas:{scale:2,useCORS:true,scrollY:0},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+      pagebreak:{mode:['css','legacy']}
+    }).from(el).save();
+  }finally{
+    hidden.forEach(n=>n.style.display='');
+  }
 }
 
 function arr(v){return Array.isArray(v)?v:(v?[v]:[]);}
@@ -1419,7 +1431,7 @@ function generateReportHTML(data){
 </div>
 <div class="report-footer">
   <div class="report-footer-brand">Reason Design · 若善設計</div>
-  <div class="report-footer-actions">
+  <div class="report-footer-actions no-pdf">
     <button class="btn-report-close" onclick="closeReport()">完成</button>
   </div>
 </div>
