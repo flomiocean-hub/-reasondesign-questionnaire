@@ -389,6 +389,16 @@ input[type="range"]::-moz-range-thumb{
   .report-footer-actions{width:100%}
   .btn-report-dl,.btn-report-close{flex:1;text-align:center}
 }
+
+/* ── PDF PAGE BREAK PROTECTION ── */
+.report-cover{page-break-inside:avoid;break-inside:avoid}
+.report-section{page-break-inside:avoid;break-inside:avoid}
+.report-num-list li{page-break-inside:avoid;break-inside:avoid}
+.report-table tr{page-break-inside:avoid;break-inside:avoid}
+.report-tags{page-break-inside:avoid;break-inside:avoid}
+.report-keywords{page-break-inside:avoid;break-inside:avoid}
+.report-ref-box{page-break-inside:avoid;break-inside:avoid}
+.report-footer{page-break-inside:avoid;break-inside:avoid}
 </style>
 </head>
 <body>
@@ -396,7 +406,6 @@ input[type="range"]::-moz-range-thumb{
 <!-- NAV -->
 <nav class="top-nav">
   <div class="nav-brand">Reason Design<em>若善設計</em></div>
-  <a class="btn-brief" href="system-brief.html" target="_blank">System Brief</a>
 </nav>
 
 <!-- PROGRESS -->
@@ -1125,6 +1134,9 @@ input[type="range"]::-moz-range-thumb{
       <div class="process-card"><div class="process-n">05 →</div><div class="process-t">施工監管</div></div>
       <div class="process-card"><div class="process-n">06</div><div class="process-t">完工售後陪伴</div></div>
     </div>
+    <div style="margin-top:48px">
+      <button class="btn-ghost" onclick="downloadReport()">下載空間診斷書 PDF</button>
+    </div>
   </div>
 </div>
 
@@ -1210,10 +1222,40 @@ function toast(msg){
   setTimeout(()=>t.classList.remove('show'),3200);
 }
 
-function submitForm(){
+async function submitForm(){
   const data=collect();
-  console.log('若善設計｜問卷結果',JSON.stringify(data,null,2));
   showReport(data);
+  // 背景寄送：PDF + 摘要 email 給設計師（不阻擋客戶看報告）
+  notifyDesigner(data);
+  // 備援：保留原 flomi webhook 紀錄（best-effort）
+  fetch('https://webhook.flomi.one/questionnaire/submit',{
+    method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)
+  }).catch(e=>console.warn('webhook 紀錄失敗（不影響流程）',e));
+}
+
+async function notifyDesigner(data){
+  try{
+    const el=document.getElementById('reportContent');
+    let pdfBase64='';
+    if(el){
+      const dataUri=await html2pdf().set({
+        margin:[10,0,10,0],
+        image:{type:'jpeg',quality:0.95},
+        html2canvas:{scale:2,useCORS:true,scrollY:0},
+        jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+        pagebreak:{mode:['css','legacy']}
+      }).from(el).outputPdf('datauristring');
+      pdfBase64=(dataUri.split(',')[1])||'';
+    }
+    const name=data.f_name||'未具名';
+    await fetch('/api/submit',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({data,pdfBase64,filename:`若善設計_診斷書_${name}.pdf`})
+    });
+  }catch(e){
+    console.warn('寄送設計師失敗（不影響客戶端顯示）',e);
+  }
 }
 
 function showReport(data){
@@ -1233,11 +1275,12 @@ function downloadReport(){
   toast('正在生成診斷書 PDF⋯⋯');
   const el=document.getElementById('reportContent');
   html2pdf().set({
-    margin:0,
+    margin:[10,0,10,0],
     filename:'若善設計_生活與空間診斷書.pdf',
     image:{type:'jpeg',quality:0.95},
-    html2canvas:{scale:2,useCORS:true},
-    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+    html2canvas:{scale:2,useCORS:true,scrollY:0},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','legacy']}
   }).from(el).save();
 }
 
@@ -1275,7 +1318,6 @@ function generateReportHTML(data){
 <div class="report-footer">
   <div class="report-footer-brand">Reason Design · 若善設計</div>
   <div class="report-footer-actions">
-    <button class="btn-report-dl" onclick="downloadReport()">下載 PDF</button>
     <button class="btn-report-close" onclick="closeReport()">完成</button>
   </div>
 </div>
