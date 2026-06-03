@@ -1143,6 +1143,7 @@ input[type="range"]::-moz-range-thumb{
 </main>
 
 <div id="reportOverlay" class="report-overlay"></div>
+<div id="fullRecordHost" style="position:absolute;left:-9999px;top:0;width:800px;background:#fff"></div>
 
 <script>
 const PAGES=[
@@ -1233,29 +1234,130 @@ async function submitForm(){
   }).catch(e=>console.warn('webhook 紀錄失敗（不影響流程）',e));
 }
 
+async function elToPdfBase64(el,opts){
+  const dataUri=await html2pdf().set(Object.assign({
+    margin:[10,8,10,8],
+    image:{type:'jpeg',quality:0.92},
+    html2canvas:{scale:2,useCORS:true,scrollY:0},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['css','legacy']}
+  },opts||{})).from(el).outputPdf('datauristring');
+  return (dataUri.split(',')[1])||'';
+}
+
 async function notifyDesigner(data){
   try{
-    const el=document.getElementById('reportContent');
-    let pdfBase64='';
-    if(el){
-      const dataUri=await html2pdf().set({
-        margin:[10,0,10,0],
-        image:{type:'jpeg',quality:0.95},
-        html2canvas:{scale:2,useCORS:true,scrollY:0},
-        jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
-        pagebreak:{mode:['css','legacy']}
-      }).from(el).outputPdf('datauristring');
-      pdfBase64=(dataUri.split(',')[1])||'';
-    }
     const name=data.f_name||'未具名';
+    // 設計師信件內文 = 完整逐題紀錄（同一份也轉成 PDF 附件）
+    const recordHtml=buildFullRecord(data);
+    const host=document.getElementById('fullRecordHost');
+    host.innerHTML=recordHtml;
+    const recordEl=document.getElementById('fullRecordContent');
+    const reportEl=document.getElementById('reportContent');
+
+    const pdfs=[];
+    // ① 完整需求紀錄表（最重要 → 一定附）
+    try{
+      const b=await elToPdfBase64(recordEl);
+      if(b)pdfs.push({filename:`若善設計_完整需求紀錄表_${name}.pdf`,content:b});
+    }catch(e){console.warn('紀錄表 PDF 生成失敗',e);}
+    // ② 生活與空間診斷書（視總容量決定是否附，避免超過上傳上限）
+    let diagB='';
+    if(reportEl){
+      try{diagB=await elToPdfBase64(reportEl);}catch(e){console.warn('診斷書 PDF 生成失敗',e);}
+    }
+    const recordLen=pdfs[0]?pdfs[0].content.length:0;
+    if(diagB&&(recordLen+diagB.length)<3800000){
+      pdfs.push({filename:`若善設計_生活與空間診斷書_${name}.pdf`,content:diagB});
+    }
+    host.innerHTML='';
+
     await fetch('/api/submit',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({data,pdfBase64,filename:`若善設計_診斷書_${name}.pdf`})
+      body:JSON.stringify({data,emailHtml:recordHtml,pdfs})
     });
   }catch(e){
     console.warn('寄送設計師失敗（不影響客戶端顯示）',e);
   }
+}
+
+// ── 完整需求紀錄表（設計師專用：逐題、含所有欄位）──
+function fmt(v){return (v===0||v)&&String(v).trim()?String(v):'';}
+function dateOr(v){if(!v)return '';const t=new Date(v);return isNaN(t.getTime())?String(v):t.toLocaleDateString('zh-TW');}
+function joinG(d,group,otherId){
+  const a=arr(d[group]).slice();
+  if(otherId&&fmt(d[otherId]))a.push(String(d[otherId]).trim());
+  return a.join('、');
+}
+function sliderRow(d,id,left,right){const v=+d[id]||3;return `${left} ◄ ${v}/5 ► ${right}`;}
+
+function buildFullRecord(d){
+  const name=fmt(d.f_name)||'—';
+  const date=d.f_date?dateOr(d.f_date):new Date().toLocaleDateString('zh-TW');
+  const SP='page-break-inside:avoid';
+  const layout=`${fmt(d.f_room)||'—'} 房 ${fmt(d.f_hall)||'—'} 廳 ${fmt(d.f_bath)||'—'} 衛`;
+  const adults=(fmt(d.f_adults)?`${d.f_adults} 位`:'—')+(fmt(d.f_adults_age)?`，年齡約 ${d.f_adults_age}`:'');
+  const kids=(fmt(d.f_kids)?`${d.f_kids} 位`:'—')+(fmt(d.f_kids_age)?`，年齡約 ${d.f_kids_age}`:'');
+  const pet=(fmt(d.f_pet_type)?d.f_pet_type:'')+(fmt(d.f_pet_count)?` ${d.f_pet_count}`:'');
+  const sliders=[
+    sliderRow(d,'sl_calm','安靜沉穩','明亮開放'),
+    sliderRow(d,'sl_warm','溫暖柔和','俐落理性'),
+    sliderRow(d,'sl_natural','自然放鬆','精品精緻'),
+    sliderRow(d,'sl_minimal','留白簡約','豐富細節'),
+    sliderRow(d,'sl_pace','慢節奏','有儀式感'),
+  ].join('<br>');
+
+  const sections=[
+    {t:'01 · 基本與屋況資訊',rows:[
+      ['填表日期',date],['姓名',fmt(d.f_name)],['聯絡電話',fmt(d.f_phone)],['Email',fmt(d.f_email)],['LINE ID',fmt(d.f_line)],
+      ['專案地址／社區',fmt(d.f_address)],['預計入住',dateOr(d.f_movein)],['希望完工',dateOr(d.f_complete)],
+      ['目前屋況',joinG(d,'housing_status')],['住宅類型',joinG(d,'housing_type','housing_type_other')],
+      ['現有格局',layout],['室內坪數',fmt(d.f_area)?`約 ${d.f_area} 坪`:''],['本次規劃空間',joinG(d,'spaces','spaces_other')],
+    ]},
+    {t:'02 · 裝修經驗與預算方向',rows:[
+      ['裝修經驗',joinG(d,'reno_exp','reno_exp_count')],['最重視',joinG(d,'priorities','priorities_other')],
+      ['預算範圍',fmt(d.budget)],['在意方向',joinG(d,'budget_focus')],['決策方式',joinG(d,'decision')],['主要決策者',fmt(d.f_decision_maker)],
+    ]},
+    {t:'03 · 家庭與生活方式',rows:[
+      ['成年人',adults],['成人特殊需求',fmt(d.f_adults_note)],['孩童／青少年',kids],['孩子生活特性',joinG(d,'kids_traits','kids_traits_other')],
+      ['長輩',fmt(d.f_elders)?`${d.f_elders} 位`:''],['長輩特殊需求',fmt(d.f_elders_note)],
+      ['寵物',fmt(pet)],['寵物考量',joinG(d,'pet_needs','pet_needs_other')],
+      ['常見生活情境',joinG(d,'life_scenes','life_scenes_other')],['平日晚上節奏',joinG(d,'weeknight','weeknight_other')],
+      ['假日的家',joinG(d,'weekend','weekend_other')],['最困擾的地方',joinG(d,'pain_points','pain_points_other')],['最期待的改變',fmt(d.f_biggest_change)],
+    ]},
+    {t:'04 · 空間功能與感受偏好',rows:[
+      ['強化的生活功能',joinG(d,'functions','functions_other')],['特殊需求／設備',fmt(d.f_special_needs)],['希望保留延續',fmt(d.f_preserve)],
+      ['理想中的感受',joinG(d,'feeling_want','feeling_want_other')],['不喜歡的空間感',joinG(d,'feeling_dislike','feeling_dislike_other')],['空間意象光譜',sliders],
+    ]},
+    {t:'05 · 風格美學、色彩與靈感',rows:[
+      ['喜歡的生活畫面',joinG(d,'life_pics','life_pics_other')],['光線偏好',joinG(d,'lighting','lighting_other')],
+      ['色彩偏好',joinG(d,'color_pref','color_pref_other')],['喜歡的材質',joinG(d,'materials','materials_other')],['風格方向',joinG(d,'style_dir','style_dir_other')],
+    ]},
+    {t:'06 · 靈感與未來的家',rows:[
+      ['已有空間參考',joinG(d,'has_ref')],['參考管道',joinG(d,'ref_channels')],['參考連結／名稱',fmt(d.f_ref_links)],
+      ['喜歡的原因',joinG(d,'why_like','why_like_other')],['喜歡的品牌／飯店／空間',fmt(d.f_like_brands)],['希望避免的元素',fmt(d.f_avoid)],
+      ['一句話形容理想的家',fmt(d.f_one_sentence)],['未來的家更像',joinG(d,'space_type')],['還想說的話',fmt(d.f_final_note)],
+    ]},
+  ];
+
+  const secHtml=sections.map(s=>{
+    const rows=s.rows.map(([label,val])=>{
+      const has=val&&String(val).trim();
+      return `<tr style="${SP}"><td style="padding:7px 14px 7px 0;color:#A8A098;font-size:12px;width:120px;vertical-align:top;border-bottom:1px solid #EFEAE4">${label}</td><td style="padding:7px 0;color:${has?'#2B2B2B':'#C8C0B8'};font-size:13.5px;line-height:1.6;border-bottom:1px solid #EFEAE4">${has?val:'—'}</td></tr>`;
+    }).join('');
+    return `<div style="${SP};margin-bottom:24px"><div style="font-size:13px;letter-spacing:0.1em;color:#2B2B2B;font-weight:600;border-bottom:2px solid #2B2B2B;padding-bottom:7px;margin-bottom:4px">${s.t}</div><table style="width:100%;border-collapse:collapse">${rows}</table></div>`;
+  }).join('');
+
+  return `<div id="fullRecordContent" style="font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;background:#FFFFFF;color:#2B2B2B;max-width:760px;margin:0 auto;padding:30px 34px;box-sizing:border-box">
+  <div style="border-bottom:2px solid #2B2B2B;padding-bottom:14px;margin-bottom:22px">
+    <div style="font-size:10px;letter-spacing:0.22em;color:#A8A098;text-transform:uppercase">Reason Design · 完整需求紀錄表</div>
+    <div style="font-size:24px;font-weight:600;margin-top:8px">${name}</div>
+    <div style="font-size:12px;color:#A8A098;margin-top:5px">填表日期 ${date}　|　電話 ${fmt(d.f_phone)||'—'}　|　Email ${fmt(d.f_email)||'—'}</div>
+  </div>
+  ${secHtml}
+  <div style="margin-top:22px;padding-top:12px;border-top:1px solid #E5E1DC;font-size:11px;color:#A8A098">本表由若善設計線上問卷系統自動生成 · ${date}</div>
+</div>`;
 }
 
 function showReport(data){

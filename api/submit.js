@@ -83,7 +83,7 @@ export default async function handler(req, res){
     return;
   }
   try{
-    const { data, pdfBase64, filename } = req.body || {};
+    const { data, emailHtml, pdfs, pdfBase64, filename } = req.body || {};
     if(!data || typeof data !== 'object'){
       res.status(400).json({ error: 'Missing data' });
       return;
@@ -99,7 +99,15 @@ export default async function handler(req, res){
     const date = data.f_date || new Date().toISOString().split('T')[0];
 
     const attachments = [];
-    if(pdfBase64 && pdfBase64.length > 100){
+    if(Array.isArray(pdfs)){
+      // 新版：可附多份（完整需求紀錄表 + 診斷書）
+      for(const p of pdfs){
+        if(p && p.content && p.content.length > 100){
+          attachments.push({ filename: p.filename || 'document.pdf', content: p.content });
+        }
+      }
+    } else if(pdfBase64 && pdfBase64.length > 100){
+      // 舊版相容：單一附件
       attachments.push({
         filename: filename || `若善設計_診斷書_${name}.pdf`,
         content: pdfBase64,            // 純 base64（前端已去掉 data: 前綴）
@@ -110,7 +118,7 @@ export default async function handler(req, res){
       from: process.env.MAIL_FROM || 'Reason Design <onboarding@resend.dev>',
       to: [process.env.MAIL_TO || 'info@reasondesign.com.tw'],
       subject: `【新問卷】${name}・${date}`,
-      html: buildSummary(data),
+      html: (typeof emailHtml === 'string' && emailHtml.length > 50) ? emailHtml : buildSummary(data),
       attachments,
     };
     if(data.f_email) payload.reply_to = data.f_email;
@@ -126,7 +134,8 @@ export default async function handler(req, res){
 
     if(!r.ok){
       const detail = await r.text();
-      res.status(502).json({ error: 'Email send failed', detail });
+      console.error('Resend send failed', r.status, detail);
+      res.status(502).json({ error: 'Email send failed', status: r.status, detail });
       return;
     }
 
