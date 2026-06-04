@@ -90,10 +90,6 @@ export default async function handler(req, res){
     }
 
     const apiKey = process.env.RESEND_API_KEY;
-    if(!apiKey){
-      res.status(500).json({ error: 'RESEND_API_KEY not configured' });
-      return;
-    }
 
     const name = data.f_name || '未具名';
     const date = data.f_date || new Date().toISOString().split('T')[0];
@@ -114,33 +110,91 @@ export default async function handler(req, res){
       });
     }
 
-    const payload = {
-      from: process.env.MAIL_FROM || 'Reason Design <onboarding@resend.dev>',
-      to: [process.env.MAIL_TO || 'info@reasondesign.com.tw'],
-      subject: `【新問卷】${name}・${date}`,
-      html: (typeof emailHtml === 'string' && emailHtml.length > 50) ? emailHtml : buildSummary(data),
-      attachments,
-    };
-    if(data.f_email) payload.reply_to = data.f_email;
-
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if(!r.ok){
-      const detail = await r.text();
-      console.error('Resend send failed', r.status, detail);
-      res.status(502).json({ error: 'Email send failed', status: r.status, detail });
-      return;
+    // ── ① Email（盡力送，失敗不擋 Telegram）──
+    let emailOk = false, emailErr = null;
+    if(apiKey){
+      try{
+        const payload = {
+          from: process.env.MAIL_FROM || 'Reason Design <onboarding@resend.dev>',
+          to: [process.env.MAIL_TO || 'info@reasondesign.com.tw'],
+          subject: `【新問卷】${name}・${date}`,
+          html: (typeof emailHtml === 'string' && emailHtml.length > 50) ? emailHtml : buildSummary(data),
+          attachments,
+        };
+        if(data.f_email) payload.reply_to = data.f_email;
+        const r = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if(r.ok){ emailOk = true; }
+        else { emailErr = `${r.status} ${await r.text()}`; console.error('Resend send failed', emailErr); }
+      }catch(e){ emailErr = String(e && e.message || e); console.error('Resend error', emailErr); }
+    } else {
+      emailErr = 'RESEND_API_KEY not configured';
     }
 
-    res.status(200).json({ ok: true });
+    // ── ② Telegram（獨立，盡力送）──
+    let tgOk = false, tgErr = null;
+    const tgToken = process.env.TELEGRAM_BOT_TOKEN;
+    const tgChat = process.env.TELEGRAM_CHAT_ID;
+    if(tgToken && tgChat){
+      try{
+        // 文字摘要
+        const tr = await fetch(`https://api.telegram.org/bot${tgToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: tgChat, text: buildTelegramText(data), disable_web_page_preview: true }),
+        });
+        if(!tr.ok) throw new Error(`sendMessage ${tr.status} ${await tr.text()}`);
+        // PDF（優先送「完整需求紀錄表」= pdfs[0]）
+        const doc = Array.isArray(pdfs) ? pdfs.find(p => p && p.content && p.content.length > 100) : null;
+        if(doc){
+          const form = new FormData();
+          form.append('chat_id', String(tgChat));
+          form.append('caption', `${name} · 完整需求紀錄表`);
+          form.append('document', new Blob([Buffer.from(doc.content, 'base64')], { type: 'application/pdf' }), doc.filename || 'record.pdf');
+          const dr = await fetch(`https://api.telegram.org/bot${tgToken}/sendDocument`, { method: 'POST', body: form });
+          if(!dr.ok) throw new Error(`sendDocument ${dr.status} ${await dr.text()}`);
+        }
+        tgOk = true;
+      }catch(e){ tgErr = String(e && e.message || e); console.error('Telegram error', tgErr); }
+    } else {
+      tgErr = 'TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not configured';
+    }
+
+    // 只要有一條成功就回 200；都失敗才回 502
+    const statusCode = (emailOk || tgOk) ? 200 : 502;
+    res.status(statusCode).json({ emailOk, tgOk, emailErr, tgErr });
   }catch(e){
     res.status(500).json({ error: String(e && e.message || e) });
   }
+}
+
+function buildTelegramText(d){
+  const name = d.f_name || '未具名';
+  const date = d.f_date || new Date().toISOString().split('T')[0];
+  const line = [];
+  line.push(`🏠 新問卷｜${name}`);
+  line.push(`📅 ${date}`);
+  const contact = [d.f_phone, d.f_email, d.f_line].filter(Boolean).join('  ');
+  if(contact) line.push(`📞 ${contact}`);
+  if(d.f_address) line.push(`📍 ${d.f_address}`);
+  const layout = [
+    d.f_area ? `${d.f_area}坪` : '',
+    (d.f_room || d.f_hall || d.f_bath) ? `${d.f_room||0}房${d.f_hall||0}廳${d.f_bath||0}衛` : '',
+    arr(d.housing_type).join('、'),
+  ].filter(Boolean).join('｜');
+  if(layout) line.push(`📐 ${layout}`);
+  if(d.budget) line.push(`💰 預算：${d.budget}`);
+  const style = arr(d.style_dir).join('、');
+  if(style) line.push(`🎨 風格：${style}`);
+  const feeling = arr(d.feeling_want).slice(0, 4).join('、');
+  if(feeling) line.push(`💭 期待：${feeling}`);
+  const pains = arr(d.pain_points).join('、');
+  if(pains) line.push(`⚠️ 痛點：${pains}`);
+  if(d.f_one_sentence) line.push(`✍️ 「${d.f_one_sentence}」`);
+  line.push('');
+  line.push('📎 完整需求紀錄表 PDF 見下方檔案；完整資料另寄 Email。');
+  return line.join('\n');
 }
