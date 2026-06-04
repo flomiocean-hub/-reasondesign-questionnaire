@@ -106,7 +106,7 @@ body{
 .p0-cta{margin-top:auto;padding-top:36px}
 
 /* ── PAGE INNER ── */
-.p-wrap{max-width:880px;margin:0 auto;padding:56px 48px 48px;flex:1;display:flex;flex-direction:column}
+.p-wrap{width:100%;max-width:880px;margin:0 auto;padding:56px 48px 48px;flex:1;display:flex;flex-direction:column}
 
 /* ── SECTION HEAD ── */
 .s-label{
@@ -331,10 +331,16 @@ input[type="range"]::-moz-range-thumb{
   .btn-primary,.btn-ghost{width:100%;text-align:center}
 }
 @media(max-width:480px){
+  .cards-wide{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
   .slider-row{grid-template-columns:1fr;gap:8px}
   .sl-left{text-align:left}
   .process-grid{grid-template-columns:1fr}
   .fgrid-3{grid-template-columns:1fr}
+}
+@media(min-width:1025px){
+  .p-wrap{max-width:1060px;padding-left:60px;padding-right:60px}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+  .cards-wide{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 }
 
 /* ── REPORT OVERLAY ── */
@@ -433,7 +439,6 @@ input[type="range"]::-moz-range-thumb{
 <div class="page active" id="page-0">
   <div class="p0-wrap">
     <div class="p0-text" id="p0text">
-      <img class="p0-logo" src="reason-logo.png" alt="Reason Design 若善設計">
       <p class="p0-eyebrow">Reason Design × Space Survey</p>
       <h1 class="p0-heading">在開始之前。</h1>
       <p class="p0-body">每個家的樣子，都來自生活方式。</p>
