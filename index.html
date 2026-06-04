@@ -45,6 +45,7 @@ body{
   font-size:12px;letter-spacing:0.28em;text-transform:uppercase;color:var(--carbon);
 }
 .nav-brand em{color:var(--matte);font-style:normal;margin-left:10px;font-weight:300}
+.nav-logo{height:30px;width:auto;display:block}
 
 .btn-brief{
   font-family:var(--font-en);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
@@ -86,6 +87,8 @@ body{
 }
 .p0-text{opacity:0;transform:translateY(28px);transition:opacity 0.9s ease,transform 0.9s ease;flex:1;display:flex;flex-direction:column}
 .p0-text.visible{opacity:1;transform:translateY(0)}
+.p0-logo{width:240px;max-width:62%;height:auto;display:block;margin-bottom:56px}
+@media(max-width:768px){.p0-logo{width:200px;margin-bottom:44px}}
 .p0-eyebrow{
   font-family:var(--font-en);font-size:10px;letter-spacing:0.32em;
   text-transform:uppercase;color:var(--matte);margin-bottom:52px;
@@ -377,6 +380,7 @@ input[type="range"]::-moz-range-thumb{
 
 .report-footer{background:var(--carbon);padding:28px 44px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
 .report-footer-brand{font-family:var(--font-en);font-size:9px;letter-spacing:0.24em;color:rgba(250,250,250,0.38)}
+.report-footer-logo{height:24px;width:auto;display:block;opacity:0.55}
 .report-footer-actions{display:flex;gap:9px;flex-wrap:wrap}
 .btn-report-dl{font-family:var(--font-en);font-size:9px;letter-spacing:0.22em;text-transform:uppercase;color:var(--carbon);background:rgba(250,250,250,0.88);border:none;padding:11px 24px;cursor:pointer;transition:all 0.3s ease}
 .btn-report-dl:hover{background:#fff}
@@ -405,7 +409,7 @@ input[type="range"]::-moz-range-thumb{
 
 <!-- NAV -->
 <nav class="top-nav">
-  <div class="nav-brand">Reason Design<em>若善設計</em></div>
+  <img class="nav-logo" src="reason-logo.png" alt="Reason Design 若善設計">
 </nav>
 
 <!-- PROGRESS -->
@@ -429,6 +433,7 @@ input[type="range"]::-moz-range-thumb{
 <div class="page active" id="page-0">
   <div class="p0-wrap">
     <div class="p0-text" id="p0text">
+      <img class="p0-logo" src="reason-logo.png" alt="Reason Design 若善設計">
       <p class="p0-eyebrow">Reason Design × Space Survey</p>
       <h1 class="p0-heading">在開始之前。</h1>
       <p class="p0-body">每個家的樣子，都來自生活方式。</p>
@@ -871,7 +876,8 @@ input[type="range"]::-moz-range-thumb{
         <div class="copt" data-g="feeling_dislike" data-v="沒有生活感" onclick="toggleCard(this,true)">沒有生活感</div>
         <div class="copt" data-g="feeling_dislike" data-v="太木作感、太滿、太複雜" onclick="toggleCard(this,true)">太木作感、太滿、太複雜</div>
         <div class="copt" data-g="feeling_dislike" data-v="資訊量太多、沒有層次" onclick="toggleCard(this,true)">資訊量太多、沒有層次</div>
-        <div class="copt" data-g="feeling_dislike" data-v="太暗、太白" onclick="toggleCard(this,true)">太暗、太白</div>
+        <div class="copt" data-g="feeling_dislike" data-v="太暗" onclick="toggleCard(this,true)">太暗</div>
+        <div class="copt" data-g="feeling_dislike" data-v="太白" onclick="toggleCard(this,true)">太白</div>
         <div class="copt" data-g="feeling_dislike" data-v="太有壓迫感" onclick="toggleCard(this,true)">太有壓迫感</div>
         <div class="copt" data-g="feeling_dislike" data-v="太過流行、容易退流行" onclick="toggleCard(this,true)">太過流行、容易退流行</div>
         <div class="copt" data-g="feeling_dislike" data-v="太制式、沒有個性" onclick="toggleCard(this,true)">太制式、沒有個性</div>
@@ -1356,10 +1362,12 @@ function buildFullRecord(d){
   }).join('');
 
   return `<div id="fullRecordContent" style="font-family:'Noto Sans TC',-apple-system,'PingFang TC',sans-serif;background:#FFFFFF;color:#2B2B2B;max-width:760px;margin:0 auto;padding:30px 34px;box-sizing:border-box">
-  <div style="border-bottom:2px solid #2B2B2B;padding-bottom:14px;margin-bottom:22px">
-    <div style="font-size:10px;letter-spacing:0.22em;color:#A8A098;text-transform:uppercase">Reason Design · 完整需求紀錄表</div>
-    <div style="font-size:24px;font-weight:600;margin-top:8px">${name}</div>
-    <div style="font-size:12px;color:#A8A098;margin-top:5px">填表日期 ${date}　|　電話 ${fmt(d.f_phone)||'—'}　|　Email ${fmt(d.f_email)||'—'}</div>
+  <div style="border-bottom:2px solid #2B2B2B;padding-bottom:14px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div>
+      <div style="font-size:24px;font-weight:600">${name}</div>
+      <div style="font-size:12px;color:#A8A098;margin-top:5px">填表日期 ${date}　|　電話 ${fmt(d.f_phone)||'—'}　|　Email ${fmt(d.f_email)||'—'}</div>
+    </div>
+    <img src="reason-logo.png" alt="Reason Design 若善設計" style="height:28px;width:auto;display:block;opacity:0.85">
   </div>
   ${secHtml}
   <div style="margin-top:22px;padding-top:12px;border-top:1px solid #E5E1DC;font-size:11px;color:#A8A098">本表由若善設計線上問卷系統自動生成 · ${date}</div>
@@ -1430,7 +1438,7 @@ function generateReportHTML(data){
   ${rSection('08','Moodboard Draft','風格 Moodboard 初稿',buildMoodboard(data))}
 </div>
 <div class="report-footer">
-  <div class="report-footer-brand">Reason Design · 若善設計</div>
+  <img class="report-footer-logo" src="reason-logo-white.png" alt="Reason Design 若善設計">
   <div class="report-footer-actions no-pdf">
     <button class="btn-report-close" onclick="closeReport()">完成</button>
   </div>
