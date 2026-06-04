@@ -332,8 +332,10 @@ input[type="range"]::-moz-range-thumb{
 }
 @media(max-width:480px){
   .cards-wide{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
-  .slider-row{grid-template-columns:1fr;gap:8px}
-  .sl-left{text-align:left}
+  .slider-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:6px 0}
+  .sl-left{grid-column:1;text-align:left}
+  .sl-right{grid-column:2;text-align:right}
+  .slider-row input[type="range"]{grid-column:1/-1}
   .process-grid{grid-template-columns:1fr}
   .fgrid-3{grid-template-columns:1fr}
 }
